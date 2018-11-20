@@ -350,13 +350,6 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     return nbEvents;
 }
 
-int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
-{
-    int index = handleToDriver(handle);
-    if (index < 0) return index;
-    return mSensors[index]->batch(handle, flags, period_ns, timeout);
-}
-
 int sensors_poll_context_t::flush(int handle)
 {
     int index = handleToDriver(handle);
@@ -425,10 +418,6 @@ static int open_sensors(const struct hw_module_t* module, const char* id,
         dev->device.activate        = device__activate;
         dev->device.setDelay        = device__setDelay;
         dev->device.poll            = device__poll;
-
-        /* Batch processing */
-        dev->device.batch           = device__batch;
-        dev->device.flush           = device__flush;
 
         *device = &dev->device.common;
         status = 0;
