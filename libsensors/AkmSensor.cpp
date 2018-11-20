@@ -192,21 +192,13 @@ int AkmSensor::setDelay(int32_t handle, int64_t ns)
     if (sensor_type == 0)
         return -EINVAL;
 
-    fd = open("/sys/class/sensors/ssp_sensor/mag_poll_delay", O_RDWR);
-    if (fd >= 0) {
-        char buf[80];
-        sprintf(buf, "%lld", ns);
-        write(fd, buf, strlen(buf)+1);
-        close(fd);
-     }
-
-    fd = open("/sys/class/sensors/ssp_sensor/ori_poll_delay", O_RDWR);
-    if (fd >= 0) {
-        char buf[80];
-        sprintf(buf, "%lld", ns);
-        write(fd, buf, strlen(buf)+1);
-        close(fd);
-     }
+    switch (handle) {
+        case ID_A: what = Accelerometer; break;
+        case ID_M: what = MagneticField; break;
+        case ID_O: what = Orientation;   break;
+    }
+    if (uint32_t(what) >= numSensors)
+        return -EINVAL;
 
     mDelays[what] = ns;
     return update_delay();
@@ -319,4 +311,8 @@ void AkmSensor::processEvent(int code, int value)
             ALOGV("AkmSensor: unkown REL event code=%d, value=%d", code, value);
             break;
     }
+}
+
+int AkmSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
+    return 0;
 }
