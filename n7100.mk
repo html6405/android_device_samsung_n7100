@@ -40,7 +40,8 @@ PRODUCT_AAPT_PREF_CONFIG := xhdpi
 # Init files
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/fstab.smdk4x12:root/fstab.smdk4x12 \
-    $(LOCAL_PATH)/rootdir/init.target.rc:root/init.target.rc
+    $(LOCAL_PATH)/rootdir/init.target.rc:root/init.target.rc \
+    $(LOCAL_PATH)/rootdir/init.target.usb.rc:root/init.target.usb.rc
 
 # HIDL
 PRODUCT_COPY_FILES += \
@@ -67,12 +68,17 @@ PRODUCT_COPY_FILES += \
 
 # idc 
 PRODUCT_COPY_FILES += \
-    device/samsung/n7100/configs/idc/sec_e-pen.idc:system/usr/idc/sec_e-pen.idc
+    $(LOCAL_PATH)idc/sec_e-pen.idc:system/usr/idc/sec_e-pen.idc
+
+# RIL subscription workaround
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/restart_rild.sh:system/bin/restart_rild.sh \
+    $(LOCAL_PATH)/configs/rild_restart.rc:system/etc/init/rild_restart.rc
 
 # Keylayout
 PRODUCT_COPY_FILES += \
-    device/samsung/n7100/configs/keylayout/sec_e-pen.kl:system/usr/keylayout/sec_e-pen.kl \
-    device/samsung/n7100/configs/keylayout/sec_touchkey.kl:system/usr/keylayout/sec_touchkey.kl
+    $(LOCAL_PATH)keylayout/sec_e-pen.kl:system/usr/keylayout/sec_e-pen.kl \
+    $(LOCAL_PATH)keylayout/sec_touchkey.kl:system/usr/keylayout/sec_touchkey.kl
 
 
 # Product specific Packages
@@ -82,13 +88,11 @@ PRODUCT_PACKAGES += \
 
 # RIL & GPS fix
 PRODUCT_PACKAGES += \
-    libsecril-shim \
-    libdmitry \
-    libshim_gpsd
+    libsecril-shim 
 
 # Sensors
 PRODUCT_PACKAGES += \
-    sensors.smdk4x12
+    sensors.exynos4
 
 # NFC
 PRODUCT_PACKAGES += \
@@ -116,9 +120,6 @@ endif
 PRODUCT_COPY_FILES += \
     $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
 
-PRODUCT_PACKAGES += \
-    Stk
-
 # Samsung symbols
 PRODUCT_PACKAGES += \
     libsamsung_symbols
@@ -126,7 +127,6 @@ PRODUCT_PACKAGES += \
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.ril_class=SamsungExynos4RIL \
-    mobiledata.interfaces=pdp0,gprs,ppp0,rmnet0,rmnet1 \
     ro.telephony.call_ring.multiple=false \
     ro.telephony.call_ring.delay=3000
 
@@ -135,12 +135,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
 
-# Barometer
+# UMS
 PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.sensor.barometer.xml:system/etc/permissions/android.hardware.sensor.barometer.xml
-
-# Allow tethering without provisioning app
-PRODUCT_PROPERTY_OVERRIDES += \
-    net.tethering.noprovisioning=true
+    $(LOCAL_PATH)/configs/ums_init.sh:system/bin/ums_init.sh
 
 $(call inherit-product-if-exists, vendor/samsung/n7100/n7100-vendor.mk)

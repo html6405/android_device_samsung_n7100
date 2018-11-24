@@ -1,0 +1,6 @@
+service radioreset /system/bin/restart_rild.sh
+    class main
+    disabled
+
+on property:gsm.radioreset=true
+    start radioreset

@@ -37,8 +37,8 @@ public:
     virtual ~AkmSensor();
 
     enum {
-        Accelerometer   = 0,
-        MagneticField   = 1,
+        Accelerometer     = 0,
+        MagneticField     = 1,
         Orientation       = 2,
         SignificantMotion = 3,
         numSensors
@@ -50,7 +50,6 @@ public:
     void processEvent(int code, int value);
     int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
     int flush(int handle);
-    int setInitialState();
 
 private:
     int mAccRefCount;

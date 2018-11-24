@@ -19,23 +19,34 @@
 #include <math.h>
 #include <poll.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <dirent.h>
 #include <sys/select.h>
+#include <linux/ioctl.h>
+#include <linux/types.h>
+#include <linux/uinput.h>
 #include <cutils/log.h>
 #include <cstring>
+
 
 #include "AccelSensor.h"
 
 #define LOGTAG "AccelerometerSensor"
 
+// ioctls
+#define LSM330DLC_ACCEL_IOCTL_BASE 'a'
+#define LSM330DLC_ACCEL_IOCTL_SET_ENABLE   \
+	_IOW(LSM330DLC_ACCEL_IOCTL_BASE, 9, int)
+
+
 /*****************************************************************************/
 AccelSensor::AccelSensor()
-    : SensorBase(NULL, "accelerometer_sensor"),
-      mEnabled(0),
-
-      mInputReader(4),
-      mHasPendingEvent(false)
+    : SensorBase("/dev/acceleration", "accelerometer_sensor"),
+    mEnabled(0),
+    mInputReader(4),
+    mHasPendingEvent(false)
 {
+
     mPendingEvent.version = sizeof(sensors_event_t);
     mPendingEvent.sensor = ID_A;
     mPendingEvent.type = SENSOR_TYPE_ACCELEROMETER;
@@ -51,29 +62,30 @@ AccelSensor::AccelSensor()
 
 AccelSensor::~AccelSensor() {
 
-  //  ALOGD("AccelSensor::~AccelSensor()");
+    //  ALOGD("AccelSensor::~AccelSensor()");
     if (mEnabled) {
         enable(0, 0);
     }
 }
 
-int AccelSensor::setInitialState()
-{
+int AccelSensor::setInitialState() {
     return 0;
 }
 
 int AccelSensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
-    int err;
+    int fd;
     if (flags != mEnabled) {
-         err = sspEnable(LOGTAG, SSP_ACCEL, en);
-         if(err >= 0){
-             mEnabled = flags;
-             setInitialState();
-
-             return 0;
-         }
-         return -1;
+        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
+        fd = open(input_sysfs_path, O_RDWR);
+        if (fd >= 0) {
+            write(fd, en == 1 ? "1" : "0", 2);
+            close(fd);
+            mEnabled = flags;
+            setInitialState();
+            return 0;
+        }
+        return -1;
     }
     return 0;
 }
@@ -81,7 +93,7 @@ int AccelSensor::enable(int32_t handle, int en) {
 
 bool AccelSensor::hasPendingEvents() const {
     /* FIXME probably here should be returning mEnabled but instead
-      mHasPendingEvents. It does not work, so we cheat.*/
+       mHasPendingEvents. It does not work, so we cheat.*/
     //ALOGD("AccelSensor::~hasPendingEvents %d", mHasPendingEvent ? 1 : 0 );
     return mHasPendingEvent;
 }

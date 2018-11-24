@@ -2,6 +2,8 @@
 # system.prop for n7100
 #
 
+dalvik.vm.dexopt-data-only=1
+dalvik.vm.dex2oat-Xmx=256m
 rild.libpath=/system/lib/libsecril-shim.so
 rild.libargs=-d /dev/ttyS0
 ro.sf.lcd_density=300
@@ -26,3 +28,7 @@ ro.debuggable=1
 persist.service.adb.enable=1
 persist.service.debuggable=1
 persist.sys.usb.config=mtp,adb
+
+# SELinux status spoofing
+sys.selinux_enabled=true
+sys.selinux_enforcing=true

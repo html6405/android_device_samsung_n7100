@@ -3,6 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
@@ -28,8 +29,6 @@
 
 #include <cutils/log.h>
 #include "AkmSensor.h"
-
-#define LOGTAG "AkmSensor"
 
 #define DEBUG 1
 //#define ALOG_NDEBUG 0
@@ -59,6 +58,8 @@ AkmSensor::AkmSensor()
       mPendingMask(0),
       mInputReader(32)
 {
+    mAccRefCount = 0;
+    mMotionValue = 0;
     /* Open the library before opening the input device.  The library
      * creates a uinput device.
      */
@@ -67,29 +68,22 @@ AkmSensor::AkmSensor()
         data_fd = openInput("compass_sensor");
     }
 
-    //Incase first time fails
-    if(data_fd < 0){
-         ALOGI("%s: retrying to open compass sensor", LOGTAG);
-         data_fd = openInput("compass_sensor");
-    }
-
-    if(data_fd > 0){
-         ALOGI("%s: compass sensor successfully opened: %i", LOGTAG, data_fd);
-    }else{
-         ALOGI("%s: failed to open compass sensor", LOGTAG);
-    }
-
     memset(mPendingEvents, 0, sizeof(mPendingEvents));
 
     mPendingEvents[Accelerometer].version = sizeof(sensors_event_t);
     mPendingEvents[Accelerometer].sensor = ID_A;
     mPendingEvents[Accelerometer].type = SENSOR_TYPE_ACCELEROMETER;
-    mPendingEvents[Accelerometer].acceleration.status = SENSOR_STATUS_UNRELIABLE;
+    mPendingEvents[Accelerometer].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 
     mPendingEvents[MagneticField].version = sizeof(sensors_event_t);
     mPendingEvents[MagneticField].sensor = ID_M;
     mPendingEvents[MagneticField].type = SENSOR_TYPE_MAGNETIC_FIELD;
     mPendingEvents[MagneticField].magnetic.status = SENSOR_STATUS_ACCURACY_HIGH;
+
+    mPendingEvents[Orientation  ].version = sizeof(sensors_event_t);
+    mPendingEvents[Orientation  ].sensor = ID_O;
+    mPendingEvents[Orientation  ].type = SENSOR_TYPE_ORIENTATION;
+    mPendingEvents[Orientation  ].orientation.status = SENSOR_STATUS_ACCURACY_HIGH;
 
     mPendingEvents[SignificantMotion].version = sizeof(sensors_event_t);
     mPendingEvents[SignificantMotion].sensor = ID_SM;
@@ -124,6 +118,24 @@ AkmSensor::AkmSensor()
             mPendingEvents[MagneticField].magnetic.z = absinfo.value * CONVERT_M_Z;
         }
     }
+    if (akm_is_sensor_enabled(SENSOR_TYPE_ORIENTATION))  {
+        mEnabled |= 1<<Orientation;
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_YAW), &absinfo)) {
+            mPendingEvents[Orientation].orientation.azimuth = absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PITCH), &absinfo)) {
+            mPendingEvents[Orientation].orientation.pitch = absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ROLL), &absinfo)) {
+            mPendingEvents[Orientation].orientation.roll = -absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ORIENT_STATUS), &absinfo)) {
+            mPendingEvents[Orientation].orientation.status = uint8_t(absinfo.value & SENSOR_STATE_MASK);
+        }
+    }
+
+    // disable temperature sensor, since it is not supported
+    akm_disable_sensor(SENSOR_TYPE_TEMPERATURE);
 }
 
 AkmSensor::~AkmSensor()
@@ -133,18 +145,13 @@ AkmSensor::~AkmSensor()
     }
 }
 
-int AkmSensor::setInitialState()
-{
-    return 0;
-}
-
 int AkmSensor::enable(int32_t handle, int en)
 {
     int what = -1;
 
     switch (handle) {
         case ID_A:  what = Accelerometer;     break;
-	    case ID_M:  what = MagneticField;     break;
+        case ID_M:  what = MagneticField;     break;
         case ID_O:  what = Orientation;       break;
         case ID_SM: what = SignificantMotion; break;
     }
@@ -156,9 +163,7 @@ int AkmSensor::enable(int32_t handle, int en)
     int err = 0;
 
     if ((uint32_t(newState)<<what) != (mEnabled & (1<<what))) {
-
         uint32_t sensor_type;
-
         switch (what) {
             case SignificantMotion:
                 ALOGD_IF(DEBUG, "AkmSensor: %s Significant Motion Sensor.", en ? "Enabling" : "Disabling");
@@ -169,20 +174,20 @@ int AkmSensor::enable(int32_t handle, int en)
                 sensor_type = SENSOR_TYPE_ACCELEROMETER;
                 break;
             case MagneticField:
-                ALOGD_IF(DEBUG, "AkmSensor: %s magneticfield.", en ? "Enabling" : "Disabling");     
-                sensor_type = SENSOR_TYPE_MAGNETIC_FIELD; 
+                ALOGD_IF(DEBUG, "AkmSensor: %s magneticfield.", en ? "Enabling" : "Disabling");
+                sensor_type = SENSOR_TYPE_MAGNETIC_FIELD;
                 break;
             case Orientation:
-                ALOGD_IF(DEBUG, "AkmSensor: %s orientation.", en ? "Enabling" : "Disabling");       
-                sensor_type = SENSOR_TYPE_ORIENTATION;  
+                ALOGD_IF(DEBUG, "AkmSensor: %s orientation.", en ? "Enabling" : "Disabling");
+                sensor_type = SENSOR_TYPE_ORIENTATION;
                 break;
-            }
         }
+
         short flags = newState;
-	    if (en) {
+        if (en) {
             if ((sensor_type == SENSOR_TYPE_ACCELEROMETER) && (mAccRefCount > 0)) {
                 //Ignore if the accelerometer is already active
-	            ALOGD_IF(DEBUG, "AkmSensor: Real accelerometer is already active. refCount=%d", mAccRefCount);
+                ALOGD_IF(DEBUG, "AkmSensor: Real accelerometer is already active. refCount=%d", mAccRefCount);
                 err = 0; 
             } else {
                 err = akm_enable_sensor(sensor_type);
@@ -196,10 +201,6 @@ int AkmSensor::enable(int32_t handle, int en)
                 err = akm_disable_sensor(sensor_type);
             }
         }
-        }
-
-        err = sspEnable(LOGTAG, SSP_MAG, en);
-        setInitialState();
 
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         if (!err) {
@@ -216,20 +217,18 @@ int AkmSensor::enable(int32_t handle, int en)
 int AkmSensor::setDelay(int32_t handle, int64_t ns)
 {
     int what = -1;
-    int fd;
-
+    
     if (ns < 0)
         return -EINVAL;
 
     switch (handle) {
         /* Significant motion sensors should not set any delay */
-        case ID_SM: return 0;      
+        case ID_SM: return 0;        
         case ID_A: what = Accelerometer; break;
         case ID_M: what = MagneticField; break;
         case ID_O: what = Orientation;   break;
         default: -EINVAL;
     }
-
     if (uint32_t(what) >= numSensors)
         return -EINVAL;
 
@@ -255,6 +254,7 @@ int AkmSensor::update_delay()
     return 0;
 }
 
+
 int AkmSensor::loadAKMLibrary()
 {
     mLibAKM = dlopen("libakm.so", RTLD_NOW);
@@ -264,7 +264,7 @@ int AkmSensor::loadAKMLibrary()
         akm_enable_sensor = stub_enable_disable_sensor;
         akm_disable_sensor = stub_enable_disable_sensor;
         akm_set_delay = stub_set_delay;
-        ALOGE("%s: unable to load AKM Library, %s", LOGTAG, dlerror());
+        ALOGE("AkmSensor: unable to load AKM Library, %s", dlerror());
         return -ENOENT;
     }
 
@@ -304,16 +304,15 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
     if (n < 0)
         return n;
 
+    input_event const* event;
+
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
         if (type == EV_REL) {
             processEvent(event->code, event->value);
             mInputReader.next();
-        } else if (type == EV_ABS) {
-            processEvent(event->code, event->value);
-            mInputReader.next();
         } else if (type == EV_SYN) {
-            int64_t time = timevalToNano(event->time);
+            int64_t time = getTimestamp();
             for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
                 if (mPendingMask & (1<<j)) {
                     mPendingMask &= ~(1<<j);
@@ -322,9 +321,10 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
                         *data++ = mPendingEvents[j];
                         count--;
                         numEventReceived++;
-                        if ((mEnabled & (1<<SignificantMotion)) && (j == SignificantMotion)) {
+
+			if ((mEnabled & (1<<SignificantMotion)) && (j == SignificantMotion)) {
                             /* Disable sensor automatically */
-			                ALOGD_IF(DEBUG, "AkmSensor: Significant Motion Sensor automatically disabled.");
+			    ALOGD_IF(DEBUG, "AkmSensor: Significant Motion Sensor automatically disabled.");
                             enable(ID_SM, 0);
 			}
                     }
@@ -334,7 +334,7 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
                 mInputReader.next();
             }
         } else {
-            ALOGE("%s: unknown event (type=%d, code=%d)", LOGTAG,
+            ALOGE("AkmSensor: unknown event (type=%d, code=%d)",
                     type, event->code);
             mInputReader.next();
         }
@@ -346,7 +346,7 @@ void AkmSensor::processEvent(int code, int value)
 {
     int motionValueDiff;
     switch (code) {
-	    case EVENT_TYPE_ACCEL_X:
+        case EVENT_TYPE_ACCEL_X:
             mPendingMask |= 1<<Accelerometer;
             mPendingEvents[Accelerometer].acceleration.x = value * CONVERT_A_X;
             break;

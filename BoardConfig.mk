@@ -17,13 +17,15 @@
 # This variable is set first, so it can be overridden
 # by BoardConfigVendor.mk
 
--include device/samsung/smdk4412-common/BoardCommonConfig.mk
+include device/samsung/smdk4412-common/BoardCommonConfig.mk
 
 # Wifi
 WIFI_DRIVER_MODULE_PATH :=
 
-# Text Relocations
+# Bionic
+MALLOC_SVELTE := true
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
+LIBART_IMG_BASE := 0x30000000
 
 # Graphics
 TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
@@ -37,19 +39,6 @@ TARGET_KERNEL_CONFIG := lineageos_n7100_defconfig
 
 TARGET_SPECIFIC_HEADER_PATH += device/samsung/n7100/include
 
-# assert
-TARGET_OTA_ASSERT_DEVICE := t03g,n7100,GT-N7100
-
-# inherit from the proprietary version
--include vendor/samsung/n7100/BoardConfigVendor.mk
-
-# External apps on SD
-#TARGET_EXTERNAL_APPS = sdcard1
-
-# Camera Hacks
-BOARD_GLOBAL_CFLAGS += -DMETADATA_CAMERA_SOURCE
-TARGET_HAS_LEGACY_CAMERA_HAL1 := true
-
 # Cache
 BOARD_CACHEIMAGE_PARTITION_SIZE := 104857600
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -60,5 +49,5 @@ TARGET_RECOVERY_DENSITY := mdpi
 TARGET_USERIMAGES_USE_F2FS := true
 RECOVERY_FSTAB_VERSION := 2
 
-# Compatibility with pre-kitkat Sensor HALs
-# SENSORS_NEED_SETRATE_ON_ENABLE := true
+# assert
+TARGET_OTA_ASSERT_DEVICE := t03g,n7100,GT-N7100
