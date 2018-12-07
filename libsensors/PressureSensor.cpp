@@ -29,12 +29,16 @@
 
 #define LOGTAG "PressureSensor"
 
-#define PRESSURE_CONVERT(x) (x/4096.0f)
+/*
+ * The BMP driver gives pascal values.
+ * It needs to be changed into hectoPascal
+ */
+#define PRESSURE_HECTO (1.0f/100.0f)
 
 /*****************************************************************************/
 
 PressureSensor::PressureSensor()
-    : SensorBase(NULL, "barometer_sensor"),
+    : SensorBase(NULL, "pressure_sensor"),
       mEnabled(0),
       mInputReader(4),
       mHasPendingEvent(false)
@@ -64,26 +68,23 @@ int PressureSensor::setInitialState() {
     if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PRESSURE), &absinfo)) {
         // make sure to report an event immediately
         mHasPendingEvent = true;
-        mPendingEvent.pressure = PRESSURE_CONVERT(absinfo.value);
+        mPendingEvent.pressure = absinfo.value * PRESSURE_HECTO;
     }
     return 0;
 }
 
 int PressureSensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
-    int fd;
+    int err;
     if (flags != mEnabled) {
-        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
-        fd = open(input_sysfs_path, O_RDWR);
-        if (fd >= 0) {
-            write(fd, flags == 1 ? "1" : "0", 2);
-            close(fd);
-            mEnabled = flags;
-            setInitialState();
-            return 0;
-        }
+         err = sspEnable(LOGTAG, SSP_PRESS, en);
+         if(err >= 0){
+             mEnabled = flags;
+             setInitialState();
 
-        return -1;
+             return 0;
+         }
+         return -1;
     }
     return 0;
 }
@@ -92,18 +93,15 @@ bool PressureSensor::hasPendingEvents() const {
     return mHasPendingEvent;
 }
 
-int PressureSensor::setDelay(int32_t handle, int64_t delay)
+int PressureSensor::setDelay(int32_t handle, int64_t ns)
 {
     int fd;
-    if (delay < 10000000)
-        delay = 10;
-    else
-        delay = delay / 1000000;
+
     strcpy(&input_sysfs_path[input_sysfs_path_len], "poll_delay");
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
         char buf[80];
-        sprintf(buf, "%lld", delay);
+        sprintf(buf, "%lld", ns);
         write(fd, buf, strlen(buf)+1);
         close(fd);
         return 0;
@@ -134,8 +132,8 @@ int PressureSensor::readEvents(sensors_event_t* data, int count)
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
         if (type == EV_REL) {
-            if (event->code == REL_X) {
-                mPendingEvent.pressure = PRESSURE_CONVERT(event->value);
+            if (event->code == EVENT_TYPE_PRESSURE) {
+                mPendingEvent.pressure = event->value * PRESSURE_HECTO;
             }
         } else if (type == EV_SYN) {
             mPendingEvent.timestamp = timevalToNano(event->time);

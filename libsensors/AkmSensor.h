@@ -51,6 +51,8 @@ public:
     int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
     int flush(int handle);
 
+    int setInitialState();
+
 private:
     int mAccRefCount;
     int mMotionValue;

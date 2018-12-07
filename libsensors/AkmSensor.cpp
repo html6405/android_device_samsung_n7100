@@ -30,6 +30,8 @@
 #include <cutils/log.h>
 #include "AkmSensor.h"
 
+#define LOGTAG "AkmSensor"
+
 #define DEBUG 1
 //#define ALOG_NDEBUG 0
 
@@ -52,6 +54,7 @@ int stub_set_delay(uint32_t sensor_type, uint64_t delay) {
     return -ENODEV;
 }
 
+
 AkmSensor::AkmSensor()
 : SensorBase(NULL, NULL),
       mEnabled(0),
@@ -66,6 +69,18 @@ AkmSensor::AkmSensor()
     if (loadAKMLibrary() == 0) {
         data_name = "compass_sensor";
         data_fd = openInput("compass_sensor");
+    }
+
+    //Incase first time fails
+    if(data_fd < 0){
+         ALOGI("%s: retrying to open compass sensor", LOGTAG);
+         data_fd = openInput("compass_sensor");
+    }
+
+    if(data_fd > 0){
+         ALOGI("%s: compass sensor successfully opened: %i", LOGTAG, data_fd);
+    }else{
+         ALOGI("%s: failed to open compass sensor", LOGTAG);
     }
 
     memset(mPendingEvents, 0, sizeof(mPendingEvents));
@@ -145,6 +160,11 @@ AkmSensor::~AkmSensor()
     }
 }
 
+int AkmSensor::setInitialState()
+{
+    return 0;
+}
+
 int AkmSensor::enable(int32_t handle, int en)
 {
     int what = -1;
@@ -163,7 +183,9 @@ int AkmSensor::enable(int32_t handle, int en)
     int err = 0;
 
     if ((uint32_t(newState)<<what) != (mEnabled & (1<<what))) {
+
         uint32_t sensor_type;
+
         switch (what) {
             case SignificantMotion:
                 ALOGD_IF(DEBUG, "AkmSensor: %s Significant Motion Sensor.", en ? "Enabling" : "Disabling");
@@ -217,7 +239,7 @@ int AkmSensor::enable(int32_t handle, int en)
 int AkmSensor::setDelay(int32_t handle, int64_t ns)
 {
     int what = -1;
-    
+
     if (ns < 0)
         return -EINVAL;
 
@@ -254,7 +276,6 @@ int AkmSensor::update_delay()
     return 0;
 }
 
-
 int AkmSensor::loadAKMLibrary()
 {
     mLibAKM = dlopen("libakm.so", RTLD_NOW);
@@ -264,7 +285,7 @@ int AkmSensor::loadAKMLibrary()
         akm_enable_sensor = stub_enable_disable_sensor;
         akm_disable_sensor = stub_enable_disable_sensor;
         akm_set_delay = stub_set_delay;
-        ALOGE("AkmSensor: unable to load AKM Library, %s", dlerror());
+        ALOGE("%s: unable to load AKM Library, %s", LOGTAG, dlerror());
         return -ENOENT;
     }
 
@@ -311,6 +332,9 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
         if (type == EV_REL) {
             processEvent(event->code, event->value);
             mInputReader.next();
+        } else if (type == EV_ABS) {
+            processEvent(event->code, event->value);
+            mInputReader.next();
         } else if (type == EV_SYN) {
             int64_t time = getTimestamp();
             for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
@@ -334,7 +358,7 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
                 mInputReader.next();
             }
         } else {
-            ALOGE("AkmSensor: unknown event (type=%d, code=%d)",
+            ALOGE("%s: unknown event (type=%d, code=%d)", LOGTAG,
                     type, event->code);
             mInputReader.next();
         }

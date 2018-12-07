@@ -33,8 +33,6 @@ __BEGIN_DECLS
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
-#define LOG_TAG "sensorscpp"
-
 #define ID_A  (0)
 #define ID_M  (1)
 #define ID_O  (2)
@@ -44,6 +42,25 @@ __BEGIN_DECLS
 #define ID_PR (6)
 #define ID_SM (7)
 
+#define SSP_ACCEL  (1)
+#define SSP_GYRO   (2)
+#define SSP_MAG    (4)
+#define SSP_PRESS  (8)
+#define SSP_PROX   (32)
+#define SSP_LIGHT  (64)
+
+#define SSP_DEVICE_ENABLE   "/sys/class/sensors/ssp_sensor/enable"
+
+const int ssp_sensors[] = {
+  SSP_ACCEL,
+  SSP_GYRO,
+  SSP_MAG,
+  SSP_PRESS,
+  SSP_PROX,
+  SSP_LIGHT
+};
+
+
 /*****************************************************************************/
 
 /*
@@ -52,22 +69,22 @@ __BEGIN_DECLS
 
 /* the CM3663 is a binary proximity sensor that triggers around 6 cm on
  * this hardware */
-#define PROXIMITY_THRESHOLD_CM  6.0f
+#define PROXIMITY_THRESHOLD_CM  8.0f
 
 /*****************************************************************************/
 
-#define EVENT_TYPE_ACCEL_X          ABS_X  //1
-#define EVENT_TYPE_ACCEL_Y          ABS_Y  //0
-#define EVENT_TYPE_ACCEL_Z          ABS_Z  //2
+#define EVENT_TYPE_ACCEL_X          REL_X  //1
+#define EVENT_TYPE_ACCEL_Y          REL_Y  //0
+#define EVENT_TYPE_ACCEL_Z          REL_Z  //2
 
 #define EVENT_TYPE_YAW              ABS_RX  //3
 #define EVENT_TYPE_PITCH            ABS_RY  //4
 #define EVENT_TYPE_ROLL             ABS_RZ  //5
 #define EVENT_TYPE_ORIENT_STATUS    ABS_WHEEL //8
 
-#define EVENT_TYPE_MAGV_X           ABS_THROTTLE  // 6
-#define EVENT_TYPE_MAGV_Y           ABS_RUDDER  // 7
-#define EVENT_TYPE_MAGV_Z           ABS_GAS  // 9
+#define EVENT_TYPE_MAGV_X           ABS_RX  // 3
+#define EVENT_TYPE_MAGV_Y           ABS_RY  // 4
+#define EVENT_TYPE_MAGV_Z           ABS_RZ  // 5
 #define EVENT_TYPE_MAGV_ACC         ABS_WHEEL // 8
 
 #define EVENT_TYPE_TEMPERATURE      ABS_THROTTLE
@@ -79,7 +96,7 @@ __BEGIN_DECLS
 #define EVENT_TYPE_GYRO_Y           REL_RY
 #define EVENT_TYPE_GYRO_Z           REL_RZ
 
-#define EVENT_TYPE_PRESSURE         REL_X
+#define EVENT_TYPE_PRESSURE         REL_HWHEEL
 
 #define LSG                         (1000.0f)
 
@@ -93,8 +110,8 @@ __BEGIN_DECLS
 
 // conversion of magnetic data to uT units
 #define CONVERT_M                   (1.0f/16.0f)
-#define CONVERT_M_X                 (-CONVERT_M)
-#define CONVERT_M_Y                 (-CONVERT_M)
+#define CONVERT_M_X                 (CONVERT_M)
+#define CONVERT_M_Y                 (CONVERT_M)
 #define CONVERT_M_Z                 (CONVERT_M)
 
 /* conversion of orientation data to degree units */
@@ -104,7 +121,7 @@ __BEGIN_DECLS
 #define CONVERT_O_R                 (CONVERT_O)
 
 // conversion of gyro data to SI units (radian/sec)
-#define RANGE_GYRO                  (500.0f*(float)M_PI/180.0f)
+#define RANGE_GYRO                  (2000.0f*(float)M_PI/180.0f)
 #define CONVERT_GYRO                ((70.0f / 4000.0f) * ((float)M_PI / 180.0f))
 #define CONVERT_GYRO_X              (CONVERT_GYRO)
 #define CONVERT_GYRO_Y              (CONVERT_GYRO)

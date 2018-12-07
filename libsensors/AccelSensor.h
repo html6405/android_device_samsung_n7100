@@ -53,14 +53,12 @@ class AccelSensor : public SensorBase {
     bool mHasPendingEvent;
     char input_sysfs_path[PATH_MAX];
     int input_sysfs_path_len;
-//    int mUinputDevice;
 
     int setInitialState();
 
 public:
             AccelSensor();
     virtual ~AccelSensor();
-//    virtual int createUinput();
     virtual int readEvents(sensors_event_t* data, int count);
     virtual bool hasPendingEvents() const;
     virtual int setDelay(int32_t handle, int64_t ns);
