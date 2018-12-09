@@ -94,10 +94,11 @@ int GyroSensor::enable(int32_t, int en) {
 	        close(fd);
             mEnabled = flags;
             setInitialState();
-
             return 0;
+        }
+        return -1;
     }
-    return -1;
+    return 0;
 }
 
 bool GyroSensor::hasPendingEvents() const {

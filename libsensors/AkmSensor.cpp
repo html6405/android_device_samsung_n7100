@@ -343,8 +343,7 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
     ssize_t n = mInputReader.fill(data_fd);
     if (n < 0)
         return n;
-
-    int numEventReceived = 0;
+    numEventReceived = 0;
     input_event const* event;
 
     while (count && mInputReader.readEvent(&event)) {
@@ -439,11 +438,13 @@ void AkmSensor::processEvent(int code, int value)
                 status = 0;
             mPendingMask |= 1<<Orientation;
             mPendingEvents[Orientation].orientation.status = status;
-            break
+            break;
     }
 
-    int AkmSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
-    return 0;
+}
+
+int AkmSensor::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
+   return 0;
 }
 
 int AkmSensor::flush(int handle)
