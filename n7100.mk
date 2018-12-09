@@ -88,11 +88,11 @@ PRODUCT_PACKAGES += \
 
 # RIL & GPS fix
 PRODUCT_PACKAGES += \
-    libsecril-shim 
+    libsecril-shim
 
 # Sensors
 PRODUCT_PACKAGES += \
-    sensors.exynos4
+    sensors.smdk4x12
 
 # NFC
 PRODUCT_PACKAGES += \
