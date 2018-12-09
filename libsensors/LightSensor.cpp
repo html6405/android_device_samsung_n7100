@@ -70,7 +70,6 @@ int LightSensor::setInitialState() {
 int LightSensor::setDelay(int32_t handle, int64_t ns)
 {
     int fd;
-
     strcpy(&input_sysfs_path[input_sysfs_path_len], "poll_delay");
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
@@ -85,13 +84,14 @@ int LightSensor::setDelay(int32_t handle, int64_t ns)
 
 int LightSensor::enable(int32_t handle, int en)
 {
+    int flags = en ? 1 : 0;
+    int err;
+    int fd;
     if (flags != mEnabled) {
-        int fd;
         strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
         fd = open(input_sysfs_path, O_RDWR);
         if (fd >= 0) {
             char buf[2];
-            int err;
             buf[1] = 0;
             if (flags) {
                 buf[0] = '1';
@@ -104,6 +104,8 @@ int LightSensor::enable(int32_t handle, int en)
             return 0;
         }
         return -1;
+    }
+    return 0;
 }
 
 bool LightSensor::hasPendingEvents() const {
