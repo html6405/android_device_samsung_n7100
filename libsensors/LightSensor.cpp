@@ -87,9 +87,12 @@ int LightSensor::enable(int32_t handle, int en)
     int flags = en ? 1 : 0;
     int err;
     int fd;
+    ALOGD("ENABLE: Light sensors debugging flags status: ", flags);
+    ALOGD("ENABLE: Light sensors debugging mEnabled status: ", mEnabled);
     if (flags != mEnabled) {
         strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
         fd = open(input_sysfs_path, O_RDWR);
+        ALOGD("ENABLE: Light sensors debugging fd status: ", fd);
         if (fd >= 0) {
             char buf[2];
             buf[1] = 0;
@@ -103,6 +106,7 @@ int LightSensor::enable(int32_t handle, int en)
             mEnabled = flags;
             return 0;
         }
+        ALOGD("ENABLE: Light sensors failed check fd and flags ");
         return -1;
     }
     return 0;
