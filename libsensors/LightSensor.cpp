@@ -27,7 +27,7 @@
 
 #include "LightSensor.h"
 
-// #define ALOG_NDEBUG 0
+#define ALOG_NDEBUG 0
 
 /*****************************************************************************/
 
