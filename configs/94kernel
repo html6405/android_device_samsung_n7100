@@ -95,3 +95,8 @@ echo 0 > /sys/kernel/charge_levels/ignore_unstable_power
 #Ignore safety margin
 #By switching this option to on, the further deduction of 100 mA after detecting a stable charging power will not be done. Use at your own risk!
 echo 1 > /sys/kernel/charge_levels/ignore_safety_margin
+
+#--------------- LED notifications -----------------#
+
+ # Enable battery charge led notification
+echo 1 > /sys/module/leds_an30259a/parameters/led_switch
