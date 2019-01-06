@@ -81,10 +81,10 @@ const int ssp_sensors[] = {
 #define EVENT_TYPE_ROLL             ABS_RZ  //5
 #define EVENT_TYPE_ORIENT_STATUS    ABS_WHEEL //8
 
-#define EVENT_TYPE_MAGV_X           ABS_THROTTLE // 6
-#define EVENT_TYPE_MAGV_Y           ABS_RUDDER // 7
-#define EVENT_TYPE_MAGV_Z           ABS_GAS    // 9
-#define EVENT_TYPE_MAGV_ACC         ABS_WHEEL  // 8
+#define EVENT_TYPE_MAGV_X           ABS_RX  // 3
+#define EVENT_TYPE_MAGV_Y           ABS_RY  // 4
+#define EVENT_TYPE_MAGV_Z           ABS_RZ  // 5
+#define EVENT_TYPE_MAGV_ACC         ABS_WHEEL // 8
 
 #define EVENT_TYPE_TEMPERATURE      ABS_THROTTLE
 #define EVENT_TYPE_STEP_COUNT       ABS_GAS
@@ -95,7 +95,7 @@ const int ssp_sensors[] = {
 #define EVENT_TYPE_GYRO_Y           REL_RY
 #define EVENT_TYPE_GYRO_Z           REL_RZ
 
-#define EVENT_TYPE_PRESSURE         REL_X
+#define EVENT_TYPE_PRESSURE         REL_HWHEEL
 
 #define LSG                         (1000.0f)
 
@@ -114,7 +114,7 @@ const int ssp_sensors[] = {
 #define CONVERT_M_Z                 (CONVERT_M)
 
 /* conversion of orientation data to degree units */
-#define CONVERT_O                   (1.0f/64.0f)
+#define CONVERT_O                   (1.0f/1000.0f)
 #define CONVERT_O_A                 (CONVERT_O)
 #define CONVERT_O_P                 (CONVERT_O)
 #define CONVERT_O_R                 (CONVERT_O)

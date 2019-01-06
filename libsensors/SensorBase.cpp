@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
+#include <pthread.h>
 #include <cstring>
 
 #include <cutils/log.h>
@@ -28,7 +29,6 @@
 #include <linux/input.h>
 
 #include "SensorBase.h"
-#include "sensors.h"
 
 /*****************************************************************************/
 
@@ -87,11 +87,11 @@ int SensorBase::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
     (void)timeout;
     return setDelay(handle, period_ns);
 }
- int SensorBase::flush(int handle)
+
+int SensorBase::flush(int handle)
 {
     return 0;
 }
-
 bool SensorBase::hasPendingEvents() const {
     return false;
 }

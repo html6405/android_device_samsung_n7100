@@ -27,7 +27,9 @@
 
 #include "LightSensor.h"
 
-#define ALOG_NDEBUG 0
+#define LOGTAG "LightSensor"
+
+// #define ALOG_NDEBUG 0
 
 /*****************************************************************************/
 
@@ -70,6 +72,7 @@ int LightSensor::setInitialState() {
 int LightSensor::setDelay(int32_t handle, int64_t ns)
 {
     int fd;
+
     strcpy(&input_sysfs_path[input_sysfs_path_len], "poll_delay");
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
@@ -86,28 +89,15 @@ int LightSensor::enable(int32_t handle, int en)
 {
     int flags = en ? 1 : 0;
     int err;
-    int fd;
-    ALOGD("ENABLE: Light sensors debugging flags status: ", flags);
-    ALOGD("ENABLE: Light sensors debugging mEnabled status: ", mEnabled);
     if (flags != mEnabled) {
-        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
-        fd = open(input_sysfs_path, O_RDWR);
-        ALOGD("ENABLE: Light sensors debugging fd status: ", fd);
-        if (fd >= 0) {
-            char buf[2];
-            buf[1] = 0;
-            if (flags) {
-                buf[0] = '1';
-            } else {
-                buf[0] = '0';
-            }
-            err = write(fd, buf, sizeof(buf));
-            close(fd);
-            mEnabled = flags;
-            return 0;
-        }
-        ALOGD("ENABLE: Light sensors failed check fd and flags ");
-        return -1;
+         err = sspEnable(LOGTAG, SSP_LIGHT, en);
+         if(err >= 0){
+              mEnabled = flags;
+              setInitialState();
+
+              return 0;
+         }
+         return -1;
     }
     return 0;
 }
@@ -137,7 +127,7 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
 
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
-        if (type == EV_ABS) {
+        if (type == EV_REL) {
              if (event->code == EVENT_TYPE_LIGHT) {
                     mPendingEvent.light = event->value;
             }
@@ -149,7 +139,7 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
             }
         } else {
-            ALOGE("LightSensor: unknown event (type=%d, code=%d)",
+            ALOGE("%s: unknown event (type=%d, code=%d)", LOGTAG,
                     type, event->code);
         }
         mInputReader.next();
