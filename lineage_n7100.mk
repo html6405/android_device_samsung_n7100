@@ -23,4 +23,9 @@ PRODUCT_MODEL := GT-N7100
 PRODUCT_MANUFACTURER := samsung
 
 # Set build fingerprint / ID / Product Name ect.
-PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=t03gxx TARGET_DEVICE=t03g BUILD_FINGERPRINT="samsung/t03gxx/t03g:4.3/JSS15J/N7100XXUEMK4:user/release-keys" PRIVATE_BUILD_DESC="t03gxx-user 4.3 JSS15J N7100XXUEMK4 release-keys"
+PRODUCT_BUILD_PROP_OVERRIDES += \
+            PRODUCT_NAME=t03gxx \
+            TARGET_DEVICE=t03g 
+            PRIVATE_BUILD_DESC="t03gxx-user 4.3 JSS15J N7100XXUEMK4 release-keys"
+            
+BUILD_FINGERPRINT="samsung/t03gxx/t03g:4.3/JSS15J/N7100XXUEMK4:user/release-keys" 
