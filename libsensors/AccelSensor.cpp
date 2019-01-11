@@ -28,6 +28,11 @@
 
 #define LOGTAG "AccelerometerSensor"
 
+#define ALOG_NDEBUG 0
+#define LOG_NDEBUG 0
+#define LOG_NIDEBUG 0
+#define LOG_NDDEBUG 0
+
 /*****************************************************************************/
 AccelSensor::AccelSensor()
     : SensorBase(NULL, "accelerometer_sensor"),
@@ -65,10 +70,10 @@ int AccelSensor::setInitialState()
 int AccelSensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
     int err;
-    ALOGE(LOGTAG, "Check flags", flags);
+    ALOGD(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
          err = sspEnable(LOGTAG, SSP_ACCEL, en);
-         ALOGE(LOGTAG, "Err status", err);
+         ALOGD(LOGTAG, "Err status", err);
          if(err >= 0){
              mEnabled = flags;
              setInitialState();
@@ -147,7 +152,7 @@ int AccelSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
             }
         } else {
-            ALOGE("%s: unknown event (type=%d, code=%d)", LOGTAG,
+            ALOGD("%s: unknown event (type=%d, code=%d)", LOGTAG,
                     type, event->code);
         }
 
