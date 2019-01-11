@@ -76,7 +76,9 @@ int PressureSensor::setInitialState() {
 int PressureSensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
     int err;
+    ALOGE(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
+         ALOGE(LOGTAG, "Err status", err);
          err = sspEnable(LOGTAG, SSP_PRESS, en);
          if(err >= 0){
              mEnabled = flags;
