@@ -90,8 +90,10 @@ int ProximitySensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
     int err;
     //ALOGD("%s: Enable: %i", __func__, en);
+    ALOGE(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
          err = sspEnable(LOGTAG, SSP_PROX, en);
+         ALOGE(LOGTAG, "Err status", err);
          if(err >= 0){
              mEnabled = flags;
              setInitialState();
