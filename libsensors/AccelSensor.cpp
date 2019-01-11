@@ -65,8 +65,10 @@ int AccelSensor::setInitialState()
 int AccelSensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
     int err;
+    ALOGE(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
          err = sspEnable(LOGTAG, SSP_ACCEL, en);
+         ALOGE(LOGTAG, "Err status", err);
          if(err >= 0){
              mEnabled = flags;
              setInitialState();
