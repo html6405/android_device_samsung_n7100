@@ -117,6 +117,7 @@ static int sensors__get_sensors_list(struct sensors_module_t* module,
                                      struct sensor_t const** list)
 {
         *list = sSensorList;
+        ALOGD(LOGTAG, " Sensors list ", *list);
         return ARRAY_SIZE(sSensorList);
 }
 
@@ -250,7 +251,7 @@ sensors_poll_context_t::~sensors_poll_context_t() {
 int sensors_poll_context_t::activate(int handle, int enabled) {
     if (!mInitialized) return -EINVAL;
     int index = handleToDriver(handle);
-    //ALOGI("Sensors: handle: %i", handle);
+    ALOGI("Sensors: handle: %i", handle);
     if (index < 0) return index;
     int err =  mSensors[index]->enable(handle, enabled);
     if (enabled && !err) {
