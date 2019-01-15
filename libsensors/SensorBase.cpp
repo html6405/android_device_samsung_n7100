@@ -28,6 +28,7 @@
 #include <linux/input.h>
 
 #include "SensorBase.h"
+#include "sensors.h"
 
 /*****************************************************************************/
 
