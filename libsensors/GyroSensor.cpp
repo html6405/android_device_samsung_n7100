@@ -26,6 +26,8 @@
 
 #include "GyroSensor.h"
 
+#define LOGTAG "GyroSensor"
+
 #define ALOG_NDEBUG 0
 #define LOG_NDEBUG 0
 #define LOG_NIDEBUG 0
