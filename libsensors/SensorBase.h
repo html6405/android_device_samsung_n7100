@@ -22,9 +22,6 @@
 #include <sys/cdefs.h>
 #include <sys/types.h>
 
-#include "sensors.h"
-
-
 /*****************************************************************************/
 
 struct sensors_event_t;

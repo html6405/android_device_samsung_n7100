@@ -87,12 +87,17 @@ AkmSensor::AkmSensor()
     mPendingEvents[Accelerometer].version = sizeof(sensors_event_t);
     mPendingEvents[Accelerometer].sensor = ID_A;
     mPendingEvents[Accelerometer].type = SENSOR_TYPE_ACCELEROMETER;
-    mPendingEvents[Accelerometer].acceleration.status = SENSOR_STATUS_UNRELIABLE;
+    mPendingEvents[Accelerometer].acceleration.status = SENSOR_STATUS_ACCURACY_HIGH;
 
     mPendingEvents[MagneticField].version = sizeof(sensors_event_t);
     mPendingEvents[MagneticField].sensor = ID_M;
     mPendingEvents[MagneticField].type = SENSOR_TYPE_MAGNETIC_FIELD;
     mPendingEvents[MagneticField].magnetic.status = SENSOR_STATUS_ACCURACY_HIGH;
+
+    mPendingEvents[Orientation  ].version = sizeof(sensors_event_t);
+    mPendingEvents[Orientation  ].sensor = ID_O;
+    mPendingEvents[Orientation  ].type = SENSOR_TYPE_ORIENTATION;
+    mPendingEvents[Orientation  ].orientation.status = SENSOR_STATUS_ACCURACY_HIGH;
 
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -120,6 +125,21 @@ AkmSensor::AkmSensor()
         }
         if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_MAGV_Z), &absinfo)) {
             mPendingEvents[MagneticField].magnetic.z = absinfo.value * CONVERT_M_Z;
+        }
+    }
+    if (akm_is_sensor_enabled(SENSOR_TYPE_ORIENTATION))  {
+        mEnabled |= 1<<Orientation;
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_YAW), &absinfo)) {
+            mPendingEvents[Orientation].orientation.azimuth = absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_PITCH), &absinfo)) {
+            mPendingEvents[Orientation].orientation.pitch = absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ROLL), &absinfo)) {
+            mPendingEvents[Orientation].orientation.roll = -absinfo.value;
+        }
+        if (!ioctl(data_fd, EVIOCGABS(EVENT_TYPE_ORIENT_STATUS), &absinfo)) {
+            mPendingEvents[Orientation].orientation.status = uint8_t(absinfo.value & SENSOR_STATE_MASK);
         }
     }
 }
@@ -304,7 +324,7 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
             processEvent(event->code, event->value);
             mInputReader.next();
         } else if (type == EV_SYN) {
-            int64_t time = timevalToNano(event->time);
+            int64_t time = getTimestamp();
             for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
                 if (mPendingMask & (1<<j)) {
                     mPendingMask &= ~(1<<j);

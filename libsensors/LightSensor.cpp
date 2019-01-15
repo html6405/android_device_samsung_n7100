@@ -27,8 +27,6 @@
 
 #include "LightSensor.h"
 
-#define LOGTAG "LightSensor"
-
 #define ALOG_NDEBUG 0
 #define LOG_NDEBUG 0
 #define LOG_NIDEBUG 0
@@ -91,16 +89,25 @@ int LightSensor::setDelay(int32_t handle, int64_t ns)
 int LightSensor::enable(int32_t handle, int en)
 {
     int flags = en ? 1 : 0;
-    int err;
     if (flags != mEnabled) {
-         err = sspEnable(LOGTAG, SSP_LIGHT, en);
-         if(err >= 0){
-              mEnabled = flags;
-              setInitialState();
-
-              return 0;
-         }
-         return -1;
+        int fd;
+        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
+        fd = open(input_sysfs_path, O_RDWR);
+        if (fd >= 0) {
+            char buf[2];
+            int err;
+            buf[1] = 0;
+            if (flags) {
+                buf[0] = '1';
+            } else {
+                buf[0] = '0';
+            }
+            err = write(fd, buf, sizeof(buf));
+            close(fd);
+            mEnabled = flags;
+            return 0;
+        }
+        return -1;
     }
     return 0;
 }
@@ -130,9 +137,13 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
 
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
-        if (type == EV_REL) {
+        if (type == EV_ABS) {
              if (event->code == EVENT_TYPE_LIGHT) {
+                if (event->value != -1) {
+                    ALOGV("LightSensor: event (value=%d)", event->value);
+                    // FIXME: not sure why we're getting -1 sometimes
                     mPendingEvent.light = event->value;
+                }
             }
         } else if (type == EV_SYN) {
             mPendingEvent.timestamp = timevalToNano(event->time);
@@ -142,7 +153,7 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
             }
         } else {
-            ALOGD("%s: unknown event (type=%d, code=%d)", LOGTAG,
+            ALOGE("LightSensor: unknown event (type=%d, code=%d)",
                     type, event->code);
         }
         mInputReader.next();
