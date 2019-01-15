@@ -149,7 +149,6 @@ struct sensors_poll_context_t {
     int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
 
     // return true if the constructor is completed
-    bool isValid() { return mInitialized; };
     int flush(int handle);
 
 private:
@@ -172,7 +171,6 @@ private:
     int handleToDriver(int handle) const {
       switch (handle) {
             case ID_A:
-                return accel;
             case ID_M:
             case ID_O:
                 return akm;
@@ -304,7 +302,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
     return nbEvents;
 }
 
-int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout) {
+int sensors_poll_context_t::batch(int handle, int flags, int64_t period_ns, int64_t timeout)
 {
     int index = handleToDriver(handle);
     if (index < 0) return index;
