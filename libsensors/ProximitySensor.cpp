@@ -70,28 +70,21 @@ int ProximitySensor::setInitialState() {
     return 0;
 }
 
-int ProximitySensor::enable(int32_t, int en) {
+int ProximitySensor::enable(int32_t handle, int en) {
     int flags = en ? 1 : 0;
+    int err;
+    //ALOGD("%s: Enable: %i", __func__, en);
+    ALOGD(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
-        int fd;
-        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
-        fd = open(input_sysfs_path, O_RDWR);
-        if (fd >= 0) {
-            char buf[2];
-            buf[1] = 0;
-            if (flags) {
-                buf[0] = '1';
-            } else {
-                buf[0] = '0';
-            }
-            write(fd, buf, sizeof(buf));
-            close(fd);
-            mEnabled = flags;
-            setInitialState();
-            return 0;
-        }
+         err = sspEnable(LOGTAG, SSP_PROX, en);
+         ALOGD(LOGTAG, "Err status", err);
+         if(err >= 0){
+             mEnabled = flags;
+             setInitialState();
 
-        return -1;
+             return 0;
+         }
+         return -1;
     }
     return 0;
 }
