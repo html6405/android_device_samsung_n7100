@@ -117,7 +117,6 @@ static int sensors__get_sensors_list(struct sensors_module_t* module,
                                      struct sensor_t const** list)
 {
         *list = sSensorList;
-        ALOGD(LOGTAG, " Sensors list ", *list);
         return ARRAY_SIZE(sSensorList);
 }
 
