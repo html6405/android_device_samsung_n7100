@@ -130,13 +130,9 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
 
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
-        if (type == EV_ABS) {
+        if (type == EV_REL) {
              if (event->code == EVENT_TYPE_LIGHT) {
-                if (event->value != -1) {
-                    ALOGV("LightSensor: event (value=%d)", event->value);
-                    // FIXME: not sure why we're getting -1 sometimes
                     mPendingEvent.light = event->value;
-                }
             }
         } else if (type == EV_SYN) {
             mPendingEvent.timestamp = timevalToNano(event->time);
@@ -146,7 +142,7 @@ int LightSensor::readEvents(sensors_event_t* data, int count)
                 numEventReceived++;
             }
         } else {
-            ALOGE("LightSensor: unknown event (type=%d, code=%d)",
+            ALOGD("%s: unknown event (type=%d, code=%d)", LOGTAG,
                     type, event->code);
         }
         mInputReader.next();

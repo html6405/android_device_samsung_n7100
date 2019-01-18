@@ -88,6 +88,7 @@ int GyroSensor::enable(int32_t handle, int en) {
     int err;
     ALOGD(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
+
          err = sspEnable(LOGTAG, SSP_GYRO, en);
          ALOGD(LOGTAG, "Err status", err);
          if(err >= 0){
@@ -105,7 +106,7 @@ bool GyroSensor::hasPendingEvents() const {
     return mHasPendingEvent;
 }
 
-int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
+int GyroSensor::setDelay(int32_t handle, int64_t ns)
 {
     int fd;
 
@@ -113,7 +114,7 @@ int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
         char buf[80];
-        sprintf(buf, "%lld", delay_ns);
+        sprintf(buf, "%lld", ns);
         write(fd, buf, strlen(buf)+1);
         close(fd);
         return 0;
@@ -164,7 +165,7 @@ again:
                 count--;
             }
         } else {
-            ALOGE("GyroSensor: unknown event (type=%d, code=%d)",
+            ALOGD("%s: unknown event (type=%d, code=%d)", LOGTAG,
                     type, event->code);
         }
         mInputReader.next();
