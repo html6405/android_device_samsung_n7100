@@ -34,8 +34,8 @@ ro.hwui.path_cache_size=2
 ro.hwui.r_buffer_cache_size=1
 ro.hwui.texture_cache_size=8
 
-# Camera & Media hacks
-media.stagefright.legacyencoder=true
+# Camera API
+persist.camera.HAL3.enabled=1
 
 # EGL blobs crash on screen off
 ro.egl.destroy_after_detach=true
