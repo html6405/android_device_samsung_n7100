@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/select.h>
-#include <pthread.h>
 #include <cstring>
 
 #include <cutils/log.h>
@@ -31,8 +30,6 @@
 #include "SensorBase.h"
 
 /*****************************************************************************/
-
-static pthread_mutex_t sspEnableLock = PTHREAD_MUTEX_INITIALIZER;
 
 SensorBase::SensorBase(
         const char* dev_name,
@@ -99,7 +96,7 @@ bool SensorBase::hasPendingEvents() const {
 int64_t SensorBase::getTimestamp() {
     struct timespec t;
     t.tv_sec = t.tv_nsec = 0;
-    clock_gettime(CLOCK_MONOTONIC, &t);
+    clock_gettime(CLOCK_BOOTTIME, &t);
     return int64_t(t.tv_sec)*1000000000LL + t.tv_nsec;
 }
 
@@ -139,48 +136,5 @@ int SensorBase::openInput(const char* inputName) {
     }
     closedir(dir);
     ALOGE_IF(fd<0, "couldn't find '%s' input device", inputName);
-
     return fd;
-}
-
-int SensorBase::sspEnable(const char* sensorname, int sensorvalue, int en)
-{
-    FILE* sspfile;
-    int sspValue = 0;
-
-    pthread_mutex_lock(&sspEnableLock);
-
-    sspfile = fopen(SSP_DEVICE_ENABLE, "r+");
-    fscanf(sspfile, "%d", &sspValue);
-    fclose(sspfile);
-
-    if (en)
-        sspValue |= sensorvalue;
-    else
-        sspValue &= ~sensorvalue;
-
-    sspWrite(sspValue);
-
-    pthread_mutex_unlock(&sspEnableLock);
-
-    return 0;
-}
-
-int SensorBase::sspWrite(int sensorvalue)
-{
-    char buf[12];
-    int fd, ret, err;
-
-    sprintf(buf, "%d", sensorvalue);
-    fd = open(SSP_DEVICE_ENABLE, O_RDWR);
-    if (fd >= 0) {
-        err = write(fd, buf, sizeof(buf));
-	ret = 0;
-    } else {
-        ALOGI("%s: error writing to file", __func__);
-	ret = -1;
-    }
-    
-    close(fd);
-    return ret;
 }

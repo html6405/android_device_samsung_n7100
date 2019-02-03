@@ -103,7 +103,10 @@ bool PressureSensor::hasPendingEvents() const {
 int PressureSensor::setDelay(int32_t handle, int64_t ns)
 {
     int fd;
-
+    if (ns < 10000000)
+        ns = 10;
+    else
+        ns = ns / 1000000;
     strcpy(&input_sysfs_path[input_sysfs_path_len], "poll_delay");
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
@@ -139,7 +142,7 @@ int PressureSensor::readEvents(sensors_event_t* data, int count)
     while (count && mInputReader.readEvent(&event)) {
         int type = event->type;
         if (type == EV_REL) {
-            if (event->code == EVENT_TYPE_PRESSURE) {
+            if (event->code == REL_X) {
                 mPendingEvent.pressure = event->value * PRESSURE_HECTO;
             }
         } else if (type == EV_SYN) {

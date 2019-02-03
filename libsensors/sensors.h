@@ -41,25 +41,6 @@ __BEGIN_DECLS
 #define ID_GY (5)
 #define ID_PR (6)
 
-#define SSP_ACCEL  (1)
-#define SSP_GYRO   (2)
-#define SSP_MAG    (4)
-#define SSP_PRESS  (8)
-#define SSP_PROX   (32)
-#define SSP_LIGHT  (64)
-
-#define SSP_DEVICE_ENABLE   "/sys/class/sensors/ssp_sensor/enable"
-
-const int ssp_sensors[] = {
-  SSP_ACCEL,
-  SSP_GYRO,
-  SSP_MAG,
-  SSP_PRESS,
-  SSP_PROX,
-  SSP_LIGHT
-};
-
-
 /*****************************************************************************/
 
 /*
@@ -72,18 +53,18 @@ const int ssp_sensors[] = {
 
 /*****************************************************************************/
 
-#define EVENT_TYPE_ACCEL_X          REL_X  //1
-#define EVENT_TYPE_ACCEL_Y          REL_Y  //0
-#define EVENT_TYPE_ACCEL_Z          REL_Z  //2
+#define EVENT_TYPE_ACCEL_X          ABS_X  //1
+#define EVENT_TYPE_ACCEL_Y          ABS_Y  //0
+#define EVENT_TYPE_ACCEL_Z          ABS_Z  //2
 
 #define EVENT_TYPE_YAW              ABS_RX  //3
 #define EVENT_TYPE_PITCH            ABS_RY  //4
 #define EVENT_TYPE_ROLL             ABS_RZ  //5
 #define EVENT_TYPE_ORIENT_STATUS    ABS_WHEEL //8
 
-#define EVENT_TYPE_MAGV_X           ABS_RX  // 3
-#define EVENT_TYPE_MAGV_Y           ABS_RY  // 4
-#define EVENT_TYPE_MAGV_Z           ABS_RZ  // 5
+#define EVENT_TYPE_MAGV_X           ABS_THROTTLE  // 3
+#define EVENT_TYPE_MAGV_Y           ABS_RUDDER  // 4
+#define EVENT_TYPE_MAGV_Z           ABS_GAS  // 5
 #define EVENT_TYPE_MAGV_ACC         ABS_WHEEL // 8
 
 #define EVENT_TYPE_TEMPERATURE      ABS_THROTTLE
@@ -95,7 +76,7 @@ const int ssp_sensors[] = {
 #define EVENT_TYPE_GYRO_Y           REL_RY
 #define EVENT_TYPE_GYRO_Z           REL_RZ
 
-#define EVENT_TYPE_PRESSURE         REL_HWHEEL
+#define EVENT_TYPE_PRESSURE         REL_X
 
 #define LSG                         (1000.0f)
 

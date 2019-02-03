@@ -26,13 +26,6 @@
 
 #include "GyroSensor.h"
 
-#define LOGTAG "GyroSensor"
-
-#define ALOG_NDEBUG 0
-#define LOG_NDEBUG 0
-#define LOG_NIDEBUG 0
-#define LOG_NDDEBUG 0
-
 #define FETCH_FULL_EVENT_BEFORE_RETURN 1
 #define IGNORE_EVENT_TIME 350000000
 /*****************************************************************************/
@@ -83,21 +76,29 @@ int GyroSensor::setInitialState() {
     return 0;
 }
 
-int GyroSensor::enable(int32_t handle, int en) {
+int GyroSensor::enable(int32_t, int en) {
     int flags = en ? 1 : 0;
-    int err;
-    ALOGD(LOGTAG, "Check flags", flags);
     if (flags != mEnabled) {
-
-         err = sspEnable(LOGTAG, SSP_GYRO, en);
-         ALOGD(LOGTAG, "Err status", err);
-         if(err >= 0){
-             mEnabled = flags;
-             setInitialState();
-
-             return 0;
-         }
-         return -1;
+        int fd;
+        strcpy(&input_sysfs_path[input_sysfs_path_len], "enable");
+        fd = open(input_sysfs_path, O_RDWR);
+        if (fd >= 0) {
+            char buf[2];
+            int err;
+            buf[1] = 0;
+            if (flags) {
+                buf[0] = '1';
+                mEnabledTime = getTimestamp() + IGNORE_EVENT_TIME;
+            } else {
+                buf[0] = '0';
+            }
+            err = write(fd, buf, sizeof(buf));
+            close(fd);
+            mEnabled = flags;
+            setInitialState();
+            return 0;
+        }
+        return -1;
     }
     return 0;
 }
@@ -106,15 +107,14 @@ bool GyroSensor::hasPendingEvents() const {
     return mHasPendingEvent;
 }
 
-int GyroSensor::setDelay(int32_t handle, int64_t ns)
+int GyroSensor::setDelay(int32_t handle, int64_t delay_ns)
 {
     int fd;
-
     strcpy(&input_sysfs_path[input_sysfs_path_len], "poll_delay");
     fd = open(input_sysfs_path, O_RDWR);
     if (fd >= 0) {
         char buf[80];
-        sprintf(buf, "%lld", ns);
+        sprintf(buf, "%lld", delay_ns);
         write(fd, buf, strlen(buf)+1);
         close(fd);
         return 0;
@@ -165,7 +165,7 @@ again:
                 count--;
             }
         } else {
-            ALOGD("%s: unknown event (type=%d, code=%d)", LOGTAG,
+            ALOGE("GyroSensor: unknown event (type=%d, code=%d)",
                     type, event->code);
         }
         mInputReader.next();

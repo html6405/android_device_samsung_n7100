@@ -148,8 +148,6 @@ struct sensors_poll_context_t {
     int pollEvents(sensors_event_t* data, int count);
     int batch(int handle, int flags, int64_t period_ns, int64_t timeout);
 
-    // return true if the constructor is completed
-    bool isValid() { return mInitialized; };
     int flush(int handle);
 
 private:
@@ -158,8 +156,7 @@ private:
         proximity       = 1,
         akm             = 2,
         gyro            = 3,
-        accel           = 4,
-        pressure        = 5,
+        pressure        = 4,
         numSensorDrivers,
         numFds,
     };
@@ -169,13 +166,10 @@ private:
     struct pollfd mPollFds[numFds];
     int mWritePipeFd;
     SensorBase* mSensors[numSensorDrivers];
-    // return true if the constructor is completed
-    bool mInitialized;
 
     int handleToDriver(int handle) const {
       switch (handle) {
             case ID_A:
-                return accel;
             case ID_M:
             case ID_O:
                 return akm;
@@ -216,11 +210,6 @@ sensors_poll_context_t::sensors_poll_context_t()
     mPollFds[gyro].events = POLLIN;
     mPollFds[gyro].revents = 0;
 
-    mSensors[accel] = new AccelSensor();
-    mPollFds[accel].fd = mSensors[accel]->getFd();
-    mPollFds[accel].events = POLLIN;
-    mPollFds[accel].revents = 0;
-
     mSensors[pressure] = new PressureSensor();
     mPollFds[pressure].fd = mSensors[pressure]->getFd();
     mPollFds[pressure].events = POLLIN;
@@ -236,7 +225,6 @@ sensors_poll_context_t::sensors_poll_context_t()
     mPollFds[wake].fd = wakeFds[0];
     mPollFds[wake].events = POLLIN;
     mPollFds[wake].revents = 0;
-    mInitialized = true;
 }
 
 sensors_poll_context_t::~sensors_poll_context_t() {
@@ -245,14 +233,14 @@ sensors_poll_context_t::~sensors_poll_context_t() {
     }
     close(mPollFds[wake].fd);
     close(mWritePipeFd);
-    mInitialized = false;
 }
 
 int sensors_poll_context_t::activate(int handle, int enabled) {
-    if (!mInitialized) return -EINVAL;
     int index = handleToDriver(handle);
-    ALOGI("Sensors: handle: %i", handle);
     if (index < 0) return index;
+    if (index == gyro && enabled == 0) {
+        usleep(200*1000);
+    }
     int err =  mSensors[index]->enable(handle, enabled);
     if (enabled && !err) {
         const char wakeMessage(WAKE_MESSAGE);
@@ -289,7 +277,34 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
                 data += nb;
             }
         }
-
+        switch (data->type) {
+            case SENSOR_TYPE_ACCELEROMETER:
+                ALOGD_IF(DEBUG, "Sensors: Accl x:%f y:%f z:%f",
+                    data->acceleration.x,
+                    data->acceleration.y,
+                    data->acceleration.z);
+                break;
+            case SENSOR_TYPE_MAGNETIC_FIELD:
+                ALOGD_IF(DEBUG, "Sensors: Magn x:%f y:%f z:%f",
+                    data->magnetic.x,
+                    data->magnetic.y,
+                    data->magnetic.z);
+                break;
+            case SENSOR_TYPE_ORIENTATION:
+                ALOGD_IF(DEBUG, "Sensors: Orie x:%f y:%f z:%f",
+                    data->orientation.x,
+                    data->orientation.y,
+                    data->orientation.z);
+                break;
+            case SENSOR_TYPE_GYROSCOPE:
+                ALOGD_IF(DEBUG, "Sensors: Gyro x:%f y:%f z:%f",
+                    data->gyro.x,
+                    data->gyro.y,
+                    data->gyro.z);
+                break;
+            default:
+                break;
+        }
         if (count) {
             // we still have some room, so try to see if we can get
             // some events immediately or just wait if we don't have
@@ -297,7 +312,7 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
             n = poll(mPollFds, numFds, nbEvents ? 0 : -1);
             if (n<0) {
                 ALOGE("poll() failed (%s)", strerror(errno));
-                return -errno;
+                return nbEvents;
             }
             if (mPollFds[wake].revents & POLLIN) {
                 char msg;

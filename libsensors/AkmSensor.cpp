@@ -92,7 +92,7 @@ AkmSensor::AkmSensor()
     mPendingEvents[MagneticField].version = sizeof(sensors_event_t);
     mPendingEvents[MagneticField].sensor = ID_M;
     mPendingEvents[MagneticField].type = SENSOR_TYPE_MAGNETIC_FIELD;
-    mPendingEvents[MagneticField].magnetic.status = SENSOR_STATUS_ACCURACY_HIGH;
+    mPendingEvents[MagneticField].magnetic.status = SENSOR_STATUS_UNRELIABLE;
 
     // read the actual value of all sensors if they're enabled already
     struct input_absinfo absinfo;
@@ -122,6 +122,9 @@ AkmSensor::AkmSensor()
             mPendingEvents[MagneticField].magnetic.z = absinfo.value * CONVERT_M_Z;
         }
     }
+
+    // disable temperature sensor, since it is not supported
+    akm_disable_sensor(SENSOR_TYPE_TEMPERATURE);
 }
 
 AkmSensor::~AkmSensor()
@@ -131,11 +134,6 @@ AkmSensor::~AkmSensor()
     }
 }
 
-int AkmSensor::setInitialState()
-{
-    return 0;
-}
-
 int AkmSensor::enable(int32_t handle, int en)
 {
     int what = -1;
@@ -143,7 +141,7 @@ int AkmSensor::enable(int32_t handle, int en)
     switch (handle) {
         case ID_A: what = Accelerometer; break;
         case ID_M: what = MagneticField; break;
-        case ID_O: what = Orientation;   break;
+        case ID_O: what = Orientation;  break;
     }
 
     if (uint32_t(what) >= numSensors)
@@ -153,24 +151,26 @@ int AkmSensor::enable(int32_t handle, int en)
     int err = 0;
 
     if ((uint32_t(newState)<<what) != (mEnabled & (1<<what))) {
-
         uint32_t sensor_type;
-
         switch (what) {
-            case MagneticField: sensor_type = SENSOR_TYPE_MAGNETIC_FIELD; break;
-            ALOGD(LOGTAG, " case what ", what);
+            case Accelerometer:
+                ALOGD_IF(DEBUG, "AkmSensor: %s accelerometer.", en ? "Enabling" : "Disabling");
+                sensor_type = SENSOR_TYPE_ACCELEROMETER;
+                break;
+            case MagneticField:
+                ALOGD_IF(DEBUG, "AkmSensor: %s magneticfield.", en ? "Enabling" : "Disabling");
+                sensor_type = SENSOR_TYPE_MAGNETIC_FIELD;
+                break;
+            case Orientation:
+                ALOGD_IF(DEBUG, "AkmSensor: %s orientation.", en ? "Enabling" : "Disabling");
+                sensor_type = SENSOR_TYPE_ORIENTATION;
+                break;
         }
         short flags = newState;
-        if (en){
-            ALOGD(LOGTAG, " en status ", en);
+        if (en)
             err = akm_enable_sensor(sensor_type);
-        }else{
-            ALOGD(LOGTAG, " en status ", en);
+        else
             err = akm_disable_sensor(sensor_type);
-        }
-
-        err = sspEnable(LOGTAG, SSP_MAG, en);
-        setInitialState();
 
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         if (!err) {
@@ -184,40 +184,15 @@ int AkmSensor::enable(int32_t handle, int en)
 int AkmSensor::setDelay(int32_t handle, int64_t ns)
 {
     int what = -1;
-    int fd;
-    uint32_t sensor_type = 0;
-
+    
     if (ns < 0)
         return -EINVAL;
-
-    switch (handle) {
-        case ID_A: sensor_type = SENSOR_TYPE_ACCELEROMETER; break;
-        case ID_M: sensor_type = SENSOR_TYPE_MAGNETIC_FIELD; break;
-    }
-
-    if (sensor_type == 0)
-        return -EINVAL;
-
-    fd = open("/sys/class/sensors/ssp_sensor/mag_poll_delay", O_RDWR);
-    if (fd >= 0) {
-        char buf[80];
-        sprintf(buf, "%lld", ns);
-        write(fd, buf, strlen(buf)+1);
-        close(fd);
-     }
-
-    fd = open("/sys/class/sensors/ssp_sensor/ori_poll_delay", O_RDWR);
-    if (fd >= 0) {
-        char buf[80];
-        sprintf(buf, "%lld", ns);
-        write(fd, buf, strlen(buf)+1);
-        close(fd);
-     }
 
     switch (handle) {
         case ID_A: what = Accelerometer; break;
         case ID_M: what = MagneticField; break;
         case ID_O: what = Orientation;   break;
+        default: -EINVAL;
     }
     if (uint32_t(what) >= numSensors)
         return -EINVAL;
@@ -300,9 +275,6 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
         if (type == EV_REL) {
             processEvent(event->code, event->value);
             mInputReader.next();
-        } else if (type == EV_ABS) {
-            processEvent(event->code, event->value);
-            mInputReader.next();
         } else if (type == EV_SYN) {
             int64_t time = timevalToNano(event->time);
             for (int j=0 ; count && mPendingMask && j<numSensors ; j++) {
@@ -331,24 +303,48 @@ int AkmSensor::readEvents(sensors_event_t* data, int count)
 void AkmSensor::processEvent(int code, int value)
 {
     switch (code) {
+        case EVENT_TYPE_ACCEL_X:
+            mPendingMask |= 1<<Accelerometer;
+            mPendingEvents[Accelerometer].acceleration.x = value * CONVERT_A_X;
+            break;
+        case EVENT_TYPE_ACCEL_Y:
+            mPendingMask |= 1<<Accelerometer;
+            mPendingEvents[Accelerometer].acceleration.y = value * CONVERT_A_Y;
+            break;
+        case EVENT_TYPE_ACCEL_Z:
+            mPendingMask |= 1<<Accelerometer;
+            mPendingEvents[Accelerometer].acceleration.z = value * CONVERT_A_Z;
+            break;
         case EVENT_TYPE_MAGV_X:
             mPendingMask |= 1<<MagneticField;
-            mPendingEvents[MagneticField].magnetic.x = value * CONVERT_M_X;
+            mPendingEvents[MagneticField].magnetic.x = (float)value * CONVERT_M_X;
             break;
         case EVENT_TYPE_MAGV_Y:
             mPendingMask |= 1<<MagneticField;
-            mPendingEvents[MagneticField].magnetic.y = value * CONVERT_M_Y;
+            mPendingEvents[MagneticField].magnetic.y = (float)value * CONVERT_M_Y;
             break;
         case EVENT_TYPE_MAGV_Z:
             mPendingMask |= 1<<MagneticField;
-            mPendingEvents[MagneticField].magnetic.z = value * CONVERT_M_Z;
+            mPendingEvents[MagneticField].magnetic.z = (float)value * CONVERT_M_Z;
             break;
-        case EVENT_TYPE_MAGV_ACC:
-            ALOGV("AkmSensor: MAGV_ACC=>%d", value);
-            mPendingMask |= 1<<MagneticField;
-            mPendingEvents[MagneticField].magnetic.status = value;
-        default:
-            ALOGV("AkmSensor: unkown REL event code=%d, value=%d", code, value);
+        case EVENT_TYPE_YAW:
+            mPendingMask |= 1<<Orientation;
+            mPendingEvents[Orientation].orientation.azimuth = value * CONVERT_O_A;
+            break;
+        case EVENT_TYPE_PITCH:
+            mPendingMask |= 1<<Orientation;
+            mPendingEvents[Orientation].orientation.pitch = value * CONVERT_O_P;
+            break;
+        case EVENT_TYPE_ROLL:
+            mPendingMask |= 1<<Orientation;
+            mPendingEvents[Orientation].orientation.roll = value * CONVERT_O_R;
+            break;
+        case EVENT_TYPE_ORIENT_STATUS:
+            uint8_t status = uint8_t(value & SENSOR_STATE_MASK);
+            if (status == 4)
+                status = 0;
+            mPendingMask |= 1<<Orientation;
+            mPendingEvents[Orientation].orientation.status = status;
             break;
     }
 }

@@ -19,27 +19,32 @@
 #include <math.h>
 #include <poll.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <dirent.h>
 #include <sys/select.h>
+#include <linux/ioctl.h>
+#include <linux/types.h>
+#include <linux/uinput.h>
 #include <cutils/log.h>
 #include <cstring>
+
 
 #include "AccelSensor.h"
 
 #define LOGTAG "AccelerometerSensor"
 
-#define ALOG_NDEBUG 0
-#define LOG_NDEBUG 0
-#define LOG_NIDEBUG 0
-#define LOG_NDDEBUG 0
+// ioctls
+#define LSM330DLC_ACCEL_IOCTL_BASE 'a'
+#define LSM330DLC_ACCEL_IOCTL_SET_ENABLE   \
+	_IOW(LSM330DLC_ACCEL_IOCTL_BASE, 9, int)
+
 
 /*****************************************************************************/
 AccelSensor::AccelSensor()
-    : SensorBase(NULL, "accelerometer_sensor"),
-      mEnabled(0),
-
-      mInputReader(4),
-      mHasPendingEvent(false)
+    : SensorBase("/dev/acceleration", "accelerometer_sensor"),
+    mEnabled(0),
+    mInputReader(4),
+    mHasPendingEvent(false)
 {
     mPendingEvent.version = sizeof(sensors_event_t);
     mPendingEvent.sensor = ID_A;

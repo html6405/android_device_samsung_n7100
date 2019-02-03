@@ -74,6 +74,12 @@ int ProximitySensor::setInitialState() {
     return 0;
 }
 
+int ProximitySensor::setDelay(int32_t handle, int64_t ns)
+{
+    // unsupported
+    return 0;
+}
+
 int ProximitySensor::enable(int32_t handle, int en) {
     int fd;
     int flags = en ? 1 : 0;
