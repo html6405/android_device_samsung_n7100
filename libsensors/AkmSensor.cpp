@@ -165,7 +165,7 @@ int AkmSensor::enable(int32_t handle, int en)
         }
 
         err = sspEnable(LOGTAG, SSP_MAG, en);
-        setInitialState();
+        //setInitialState();
 
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         if (!err) {

@@ -281,25 +281,25 @@ int sensors_poll_context_t::pollEvents(sensors_event_t* data, int count)
                 //ALOGD_IF(DEBUG, "Sensors: Accl x:%f y:%f z:%f",
                     data->acceleration.x,
                     data->acceleration.y,
-                    data->acceleration.z);
+                    data->acceleration.z;
                 break;
             case SENSOR_TYPE_MAGNETIC_FIELD:
                 //ALOGD_IF(DEBUG, "Sensors: Magn x:%f y:%f z:%f",
                     data->magnetic.x,
                     data->magnetic.y,
-                    data->magnetic.z);
+                    data->magnetic.z;
                 break;
             case SENSOR_TYPE_ORIENTATION:
                 //ALOGD_IF(DEBUG, "Sensors: Orie x:%f y:%f z:%f",
                     data->orientation.x,
                     data->orientation.y,
-                    data->orientation.z);
+                    data->orientation.z;
                 break;
             case SENSOR_TYPE_GYROSCOPE:
                 //ALOGD_IF(DEBUG, "Sensors: Gyro x:%f y:%f z:%f",
                     data->gyro.x,
                     data->gyro.y,
-                    data->gyro.z);
+                    data->gyro.z;
                 break;
             default:
                 break;

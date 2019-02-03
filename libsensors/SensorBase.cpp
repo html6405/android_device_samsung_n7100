@@ -31,6 +31,8 @@
 
 /*****************************************************************************/
 
+static pthread_mutex_t sspEnableLock = PTHREAD_MUTEX_INITIALIZER;
+
 SensorBase::SensorBase(
         const char* dev_name,
         const char* data_name)
