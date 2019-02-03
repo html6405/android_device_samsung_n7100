@@ -41,6 +41,24 @@ __BEGIN_DECLS
 #define ID_GY (5)
 #define ID_PR (6)
 
+#define SSP_ACCEL  (1)
+#define SSP_GYRO   (2)
+#define SSP_MAG    (4)
+#define SSP_PRESS  (8)
+#define SSP_PROX   (32)
+#define SSP_LIGHT  (64)
+
+#define SSP_DEVICE_ENABLE   "/sys/class/sensors/ssp_sensor/enable"
+
+const int ssp_sensors[] = {
+  SSP_ACCEL,
+  SSP_GYRO,
+  SSP_MAG,
+  SSP_PRESS,
+  SSP_PROX,
+  SSP_LIGHT
+};
+
 /*****************************************************************************/
 
 /*

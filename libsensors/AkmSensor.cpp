@@ -141,7 +141,7 @@ int AkmSensor::enable(int32_t handle, int en)
     switch (handle) {
         case ID_A: what = Accelerometer; break;
         case ID_M: what = MagneticField; break;
-        case ID_O: what = Orientation;  break;
+        case ID_O: what = Orientation;   break;
     }
 
     if (uint32_t(what) >= numSensors)
@@ -151,26 +151,21 @@ int AkmSensor::enable(int32_t handle, int en)
     int err = 0;
 
     if ((uint32_t(newState)<<what) != (mEnabled & (1<<what))) {
+
         uint32_t sensor_type;
+
         switch (what) {
-            case Accelerometer:
-                ALOGD_IF(DEBUG, "AkmSensor: %s accelerometer.", en ? "Enabling" : "Disabling");
-                sensor_type = SENSOR_TYPE_ACCELEROMETER;
-                break;
-            case MagneticField:
-                ALOGD_IF(DEBUG, "AkmSensor: %s magneticfield.", en ? "Enabling" : "Disabling");
-                sensor_type = SENSOR_TYPE_MAGNETIC_FIELD;
-                break;
-            case Orientation:
-                ALOGD_IF(DEBUG, "AkmSensor: %s orientation.", en ? "Enabling" : "Disabling");
-                sensor_type = SENSOR_TYPE_ORIENTATION;
-                break;
+            case MagneticField: sensor_type = SENSOR_TYPE_MAGNETIC_FIELD; break;
         }
         short flags = newState;
-        if (en)
+        if (en){
             err = akm_enable_sensor(sensor_type);
-        else
+        }else{
             err = akm_disable_sensor(sensor_type);
+        }
+
+        err = sspEnable(LOGTAG, SSP_MAG, en);
+        setInitialState();
 
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         if (!err) {

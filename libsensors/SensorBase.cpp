@@ -138,3 +138,45 @@ int SensorBase::openInput(const char* inputName) {
     ALOGE_IF(fd<0, "couldn't find '%s' input device", inputName);
     return fd;
 }
+
+int SensorBase::sspEnable(const char* sensorname, int sensorvalue, int en)
+{
+    FILE* sspfile;
+    int sspValue = 0;
+
+    pthread_mutex_lock(&sspEnableLock);
+
+    sspfile = fopen(SSP_DEVICE_ENABLE, "r+");
+    fscanf(sspfile, "%d", &sspValue);
+    fclose(sspfile);
+
+    if (en)
+        sspValue |= sensorvalue;
+    else
+        sspValue &= ~sensorvalue;
+
+    sspWrite(sspValue);
+
+    pthread_mutex_unlock(&sspEnableLock);
+
+    return 0;
+}
+
+int SensorBase::sspWrite(int sensorvalue)
+{
+    char buf[12];
+    int fd, ret, err;
+
+    sprintf(buf, "%d", sensorvalue);
+    fd = open(SSP_DEVICE_ENABLE, O_RDWR);
+    if (fd >= 0) {
+        err = write(fd, buf, sizeof(buf));
+	ret = 0;
+    } else {
+        ALOGI("%s: error writing to file", __func__);
+	ret = -1;
+    }
+    
+    close(fd);
+    return ret;
+}
