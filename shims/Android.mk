@@ -14,5 +14,6 @@
 # limitations under the License.
 #
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_n7100.mk
+LOCAL_PATH := $(call my-dir)
+
+include $(call all-makefiles-under,$(LOCAL_PATH))

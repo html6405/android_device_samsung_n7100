@@ -6,52 +6,16 @@ dalvik.vm.dexopt-data-only=1
 dalvik.vm.dex2oat-Xmx=256m
 rild.libpath=/system/lib/libsecril-shim.so
 rild.libargs=-d /dev/ttyS0
-ro.sf.lcd_density=300
-ro.lcd_min_brightness=20
 ro.ril.telephony.mqanelements=5
+ro.sf.lcd_density=320
+ro.lcd_min_brightness=20
 ro.ril.telephony.nstrings=4
-
-# RAM optimizations
-#persist.sys.ram_minfree=138240
-config.disable_atlas=true
-# ro.sys.fw.trim_enable_memory=805306368
-ro.sys.fw.trim_enable_memory=736870912
-ro.sys.fw.use_trim_settings=true
-ro.sys.fw.empty_app_percent=25
-ro.sys.fw.trim_empty_percent=50
-ro.sys.fw.trim_cache_percent=50
-ro.sys.fw.bg_apps_limit=32
-ro.sys.fw.bservice_limit=7
-ro.sys.fw.bservice_age=6000
-ro.sys.fw.bservice_enable=true
-# ro.am.reschedule_service=true
-
- # hwui
-ro.hwui.drop_shadow_cache_size=1
-ro.hwui.gradient_cache_size=0.2
-ro.hwui.layer_cache_size=6
-ro.hwui.path_cache_size=2
-ro.hwui.r_buffer_cache_size=1
-ro.hwui.texture_cache_size=8
 
 # Camera API
 persist.camera.HAL3.enabled=1
 
-# EGL blobs crash on screen off
-ro.egl.destroy_after_detach=true
-
 # Google Assistant
 ro.opa.eligible_device=true
 
-# ADB
-ro.debug_level=0x4948
-ro.adb.secure=0
-ro.secure=0
-ro.debuggable=1
-persist.service.adb.enable=1
-persist.service.debuggable=1
-persist.sys.usb.config=mtp,adb
-
-# SELinux status spoofing
-sys.selinux_enabled=true
-sys.selinux_enforcing=true
+# sdcardfs
+ro.sys.sdcardfs=true

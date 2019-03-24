@@ -2,8 +2,8 @@
 PRODUCT_RELEASE_NAME := n7100
 
 # Inherit device configuration
-$(call inherit-product, device/samsung/n7100/n7100.mk)
 $(call inherit-product, device/samsung/smdk4412-common/common.mk)
+$(call inherit-product, device/samsung/n7100/n7100.mk)
 
 # Inherit from the common Open Source product configuration
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
@@ -24,8 +24,8 @@ PRODUCT_MANUFACTURER := samsung
 
 # Set build fingerprint / ID / Product Name ect.
 PRODUCT_BUILD_PROP_OVERRIDES += \
-            PRODUCT_NAME=t03gxx \
-            TARGET_DEVICE=t03g 
-            PRIVATE_BUILD_DESC="t03gxx-user 4.3 JSS15J N7100XXUEMK4 release-keys"
-            
-BUILD_FINGERPRINT="samsung/t03gxx/t03g:4.3/JSS15J/N7100XXUEMK4:user/release-keys" 
+        PRODUCT_NAME=t03gxx \
+        TARGET_DEVICE=t03g \
+        PRIVATE_BUILD_DESC="t03gxx-user 4.3 JSS15J N7100XXUEMK4 release-keys" 
+
+BUILD_FINGERPRINT := samsung/t03gxx/t03g:4.3/JSS15J/N7100XXUEMK4:user/release-keys 

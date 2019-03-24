@@ -1,5 +1,4 @@
-#
-# Copyright (C) 2012 The CyanogenMod Project
+# Copyright (C) 2016 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_n7100.mk
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := gps.c
+
+LOCAL_SHARED_LIBRARIES := \
+	libcutils \
+	liblog
+
+LOCAL_MODULE := gps.$(TARGET_BOOTLOADER_BOARD_NAME)
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_VENDOR_MODULE := true
+
+include $(BUILD_SHARED_LIBRARY)
+
