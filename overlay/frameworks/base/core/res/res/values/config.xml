@@ -256,7 +256,7 @@
             5 - In-app Search
          This needs to match the constants in
          policy/src/com/android/internal/policy/impl/PhoneWindowManager.java -->
-    <integer name="config_doubleTapOnHomeBehavior">0</integer>
+    <integer name="config_doubleTapOnHomeBehavior">1</integer>
 
     <!-- Boolean to enable stk functionality on Samsung phones -->
     <!-- <bool name="config_samsung_stk">true</bool> -->
@@ -274,7 +274,7 @@
     <integer name="config_multiuserMaximumUsers">4</integer>
 
     <!-- Whether UI for multi user should be shown -->
-    <bool name="config_enableMultiUserUI">true</bool>
+    <bool name="config_enableMultiUserUI">false</bool>
 
     <!-- Whether WiFi display is supported by this device.
          There are many prerequisites for this feature to work correctly.
@@ -299,6 +299,9 @@
          will prevent the system from entering a low power state until the dream ends. -->
     <bool name="config_dreamsSupported">true</bool>
 
+    <!-- If true, the display will be shifted around in ambient mode. -->
+    <bool name="config_enableBurnInProtection">true</bool>
+
     <!-- If supported, are dreams enabled? (by default) -->
     <bool name="config_dreamsEnabledByDefault">false</bool>
 
@@ -319,6 +322,11 @@
     <!-- Indicates whether round icons should be parsed from the application manifest. -->
     <bool name="config_useRoundIcon">true</bool>
 
-    <!-- Enable blur support -->
-    <!-- <bool name="config_uiBlurEnabled">true</bool> -->
+    <!-- Whether safe headphone volume is enabled or not (country specific). -->
+    <bool name="config_safe_media_volume_enabled">false</bool>
+
+    <!-- Control whether the always on display mode is available. This should only be enabled on
+         devices where the display has be tuned to be power efficient in DOZE and/or DOZE_SUSPEND
+         states. -->
+    <bool name="config_dozeAlwaysOnDisplayAvailable">true</bool>
 </resources>

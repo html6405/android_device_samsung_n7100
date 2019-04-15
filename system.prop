@@ -14,8 +14,21 @@ ro.ril.telephony.nstrings=4
 # Camera API
 persist.camera.HAL3.enabled=1
 
+# EGL blobs crash on screen off
+ro.egl.destroy_after_detach=true
+
 # Google Assistant
 ro.opa.eligible_device=true
 
 # sdcardfs
 ro.sys.sdcardfs=true
+
+#Change it to false to disable that sensor
+sensors.pressure.enable=false
+sensors.light.enable=false
+sensors.proxy.enable=false
+sensors.proxy.experimental=false
+
+#
+# ~system.prop for n7100
+#

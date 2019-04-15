@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Paul Kocialkowski <contact@paulk.fr>
+ * Copyright (C) 2019 Răileanu Cosmin <comico_work@outlook.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,10 @@
 #include <linux/input.h>
 #include <linux/uinput.h>
 
-#define LOG_TAG "smdk4x12_sensors"
+#define LOG_TAG "NoteII_Input"
 #include <utils/Log.h>
 
-#include "smdk4x12_sensors.h"
+#include "noteII_sensors.h"
 
 void input_event_set(struct input_event *event, int type, int code, int value)
 {
@@ -43,6 +43,13 @@ void input_event_set(struct input_event *event, int type, int code, int value)
 	event->value = value;
 
 	gettimeofday(&event->time, NULL);
+}
+
+int64_t getTimestamp() {
+    struct timespec t;
+    t.tv_sec = t.tv_nsec = 0;
+    clock_gettime(CLOCK_BOOTTIME, &t);
+    return (int64_t)(t.tv_sec)*1000000000LL + t.tv_nsec;
 }
 
 int64_t timestamp(struct timeval *time)
@@ -72,7 +79,7 @@ int uinput_rel_create(const char *name)
 
 	uinput_fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
 	if (uinput_fd < 0) {
-		ALOGE("%s: Unable to open uinput device", __func__);
+		//ALOGD("%s: Unable to open uinput device", __func__);
 		goto error;
 	}
 
@@ -93,23 +100,23 @@ int uinput_rel_create(const char *name)
 	rc |= ioctl(uinput_fd, UI_SET_EVBIT, EV_SYN);
 
 	if (rc < 0) {
-		ALOGE("%s: Unable to set uinput bits", __func__);
+		//ALOGD("%s: Unable to set uinput bits", __func__);
 		goto error;
 	}
 
 	rc = write(uinput_fd, &uinput_dev, sizeof(uinput_dev));
 	if (rc < 0) {
-		ALOGE("%s: Unable to write uinput device", __func__);
+		//ALOGD("%s: Unable to write uinput device", __func__);
 		goto error;
 	}
 
 	rc = ioctl(uinput_fd, UI_DEV_CREATE);
 	if (rc < 0) {
-		ALOGE("%s: Unable to create uinput device", __func__);
+		//ALOGD("%s: Unable to create uinput device", __func__);
 		goto error;
 	}
 
-	usleep(30000);
+	usleep(3000);
 
 	return uinput_fd;
 
@@ -221,6 +228,7 @@ int64_t sysfs_value_read(char *path)
 	int64_t value;
 	int fd = -1;
 	int rc;
+	int i;
 
 	if (path == NULL)
 		return -1;
@@ -233,7 +241,11 @@ int64_t sysfs_value_read(char *path)
 	if (rc <= 0)
 		goto error;
 
-	value = (int64_t)strtoimax(buffer, NULL, 10);
+	i = 0;
+	while (buffer[i] == ' ' || buffer[i] == '\t')
+		i++;
+
+	value = (int64_t)strtoimax(&buffer[i], NULL, 10);
 	goto complete;
 
 error:
@@ -256,10 +268,8 @@ int sysfs_value_write(char *path, int64_t value)
 		return -1;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0){
-		ALOGE("%s: Fd is < 0", __func__);
+	if (fd < 0)
 		goto error;
-	}
 
 	snprintf((char *) &buffer, sizeof(buffer), "%" PRId64 "\n", value);
 
