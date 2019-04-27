@@ -159,7 +159,7 @@ int lsm330dlc_gyroscope_deactivate(struct noteII_sensors_handlers *handlers)
 		return -1;
 	}
 
-	handlers->activated = 0;
+	handlers->activated = 1;
 	return 0;
 }
 

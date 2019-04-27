@@ -70,11 +70,11 @@ int cm36651_proximity_init(struct noteII_sensors_handlers *handlers,
 	int sf = snprintf(data->path_delay, PATH_MAX, "%s/poll_delay", path);
 	if(sf <= 0)
 	{
-		//ALOGD("Prox init with prox_poll_delay");
+		ALOGD("Prox init with prox_poll_delay");
 		sf = snprintf(data->path_delay, PATH_MAX, "%s/prox_poll_delay", path);
 		if(sf <= 0)
 		{
-			//ALOGD("PROX HAS FAILED !POLL_DELAY!");
+			ALOGD("PROX HAS FAILED !POLL_DELAY!");
 			goto error;
 		}
 	}
@@ -117,6 +117,7 @@ int cm36651_proximity_deinit(struct noteII_sensors_handlers *handlers)
 
 int cm36651_proximity_activate(struct noteII_sensors_handlers *handlers)
 {
+	usleep(100);
 	struct cm36651_proximity_data *data;
 	int rc;
 
@@ -139,50 +140,47 @@ int cm36651_proximity_activate(struct noteII_sensors_handlers *handlers)
 }
 
 int cm36651_proximity_deactivate(struct noteII_sensors_handlers *handlers)
-{	if(property_get_bool("sensors.proxy.enable", true) == false)
-	{
-		struct cm36651_proximity_data *data;
-		int rc;
+{	
+	usleep(100);
+	struct cm36651_proximity_data *data;
+	int rc;
 
-		//ALOGD("%s(%p)", __func__, handlers);
+	ALOGD("%s(%p)", __func__, handlers);
 
-		if (handlers == NULL || handlers->data == NULL)
-			return -EINVAL;
+	if (handlers == NULL || handlers->data == NULL)
+		return -EINVAL;
 
-		data = (struct cm36651_proximity_data *) handlers->data;
+	data = (struct cm36651_proximity_data *) handlers->data;
 
-		rc = ssp_sensor_disable(PROXIMITY_SENSOR);
-		if (rc < 0) {
-			//ALOGD("%s: Unable to disable ssp sensor", __func__);
-			return -1;
-		}
-
-		handlers->activated = 0;
-
+	rc = ssp_sensor_disable(PROXIMITY_SENSOR);
+	if (rc < 0) {
+		//ALOGD("%s: Unable to disable ssp sensor", __func__);
+		return -1;
 	}
+
+	handlers->activated = 0;
+
 	return 0;
 }
 
 int cm36651_proximity_set_delay(struct noteII_sensors_handlers *handlers, int64_t delay)
 {
-	if(property_get_bool("sensors.proxy.experimental", false) == false)
-	{
-		struct cm36651_proximity_data *data;
-		int rc;
+	struct cm36651_proximity_data *data;
+	int rc;
 
-		//ALOGD("%s(%p, %" PRId64 ")", __func__, handlers, delay);
+	//ALOGD("%s(%p, %" PRId64 ")", __func__, handlers, delay);
 
-		if (handlers == NULL || handlers->data == NULL)
-			return -EINVAL;
+	if (handlers == NULL || handlers->data == NULL)
+		return -EINVAL;
 
-		data = (struct cm36651_proximity_data *) handlers->data;
+	data = (struct cm36651_proximity_data *) handlers->data;
 
-		rc = sysfs_value_write(data->path_delay, (int) delay);
-		if (rc < 0) {
-			//ALOGD("%s: Unable to write sysfs value", __func__);
-			return -1;
-		}
+	rc = sysfs_value_write(data->path_delay, (int) delay);
+	if (rc < 0) {
+		//ALOGD("%s: Unable to write sysfs value", __func__);
+		return -1;
 	}
+	
 	return 0;
 }
 

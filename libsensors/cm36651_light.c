@@ -140,26 +140,25 @@ int cm36651_light_activate(struct noteII_sensors_handlers *handlers)
 }
 
 int cm36651_light_deactivate(struct noteII_sensors_handlers *handlers)
-{	if(property_get_bool("sensors.light.enable", true) == false)
-	{
-		struct cm36651_light_data *data;
-		int rc;
+{	
+	struct cm36651_light_data *data;
+	int rc;
 
-		//ALOGD("%s(%p)", __func__, handlers);
+	//ALOGD("%s(%p)", __func__, handlers);
 
-		if (handlers == NULL || handlers->data == NULL)
-			return -EINVAL;
+	if (handlers == NULL || handlers->data == NULL)
+		return -EINVAL;
 
-		data = (struct cm36651_light_data *) handlers->data;
+	data = (struct cm36651_light_data *) handlers->data;
 
-		rc = ssp_sensor_disable(LIGHT_SENSOR);
-		if (rc < 0) {
-			//ALOGD("%s: Unable to disable ssp sensor", __func__);
-			return -1;
-		}
-
-		handlers->activated = 0;
+	rc = ssp_sensor_disable(LIGHT_SENSOR);
+	if (rc < 0) {
+		//ALOGD("%s: Unable to disable ssp sensor", __func__);
+		return -1;
 	}
+
+	handlers->activated = 0;
+	
 	return 0;
 }
 

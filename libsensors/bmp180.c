@@ -141,26 +141,24 @@ int bmp180_activate(struct noteII_sensors_handlers *handlers)
 
 int bmp180_deactivate(struct noteII_sensors_handlers *handlers)
 {
-	if(property_get_bool("sensors.pressure.enable", true) == false)
-	{
-		struct bmp180_data *data;
-		int rc;
+	struct bmp180_data *data;
+	int rc;
 
-		//ALOGD("%s(%p)", __func__, handlers);
+	//ALOGD("%s(%p)", __func__, handlers);
 
-		if (handlers == NULL || handlers->data == NULL)
-			return -EINVAL;
+	if (handlers == NULL || handlers->data == NULL)
+		return -EINVAL;
 
-		data = (struct bmp180_data *) handlers->data;
+	data = (struct bmp180_data *) handlers->data;
 
-		rc = ssp_sensor_disable(PRESSURE_SENSOR);
-		if (rc < 0) {
-			//ALOGD("%s: Unable to disable ssp sensor", __func__);
-			return -1;
-		}
-
-		handlers->activated = 0;
+	rc = ssp_sensor_disable(PRESSURE_SENSOR);
+	if (rc < 0) {
+		//ALOGD("%s: Unable to disable ssp sensor", __func__);
+		return -1;
 	}
+
+	handlers->activated = 0;
+	
 	return 0;
 }
 
