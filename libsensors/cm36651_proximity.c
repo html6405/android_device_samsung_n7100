@@ -70,13 +70,8 @@ int cm36651_proximity_init(struct noteII_sensors_handlers *handlers,
 	int sf = snprintf(data->path_delay, PATH_MAX, "%s/poll_delay", path);
 	if(sf <= 0)
 	{
-		ALOGD("Prox init with prox_poll_delay");
-		sf = snprintf(data->path_delay, PATH_MAX, "%s/prox_poll_delay", path);
-		if(sf <= 0)
-		{
-			ALOGD("PROX HAS FAILED !POLL_DELAY!");
-			goto error;
-		}
+		ALOGD("PROX HAS FAILED !POLL_DELAY!");
+		goto error;
 	}
 
 	handlers->poll_fd = input_fd;

@@ -71,13 +71,8 @@ int cm36651_light_init(struct noteII_sensors_handlers *handlers,
 	int sf = snprintf(data->path_delay, PATH_MAX, "%s/poll_delay", path);
 	if(sf <= 0)
 	{
-		//ALOGD("Light init with light_poll_delay");
-		sf = snprintf(data->path_delay, PATH_MAX, "%s/light_poll_delay", path);
-		if(sf <= 0)
-		{
-			//ALOGD("Light HAS FAILED !POLL_DELAY!");
-			goto error;
-		}
+		//ALOGD("Light HAS FAILED !POLL_DELAY!");
+		goto error;
 	}
 
 	handlers->poll_fd = input_fd;

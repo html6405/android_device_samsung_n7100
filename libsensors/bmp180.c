@@ -71,13 +71,8 @@ int bmp180_init(struct noteII_sensors_handlers *handlers,
 	int sf = snprintf(data->path_delay, PATH_MAX, "%s/poll_delay", path);
 	if(sf <= 0)
 	{
-		//ALOGD("Pressure init with pressure_poll_delay");
-		sf = snprintf(data->path_delay, PATH_MAX, "%s/pressure_poll_delay", path);
-		if(sf <= 0)
-		{
-			//ALOGD("Pressure HAS FAILED !POLL_DELAY!");
-			goto error;
-		}
+		//ALOGD("Pressure HAS FAILED !POLL_DELAY!");
+		goto error;
 	}
 
 	handlers->poll_fd = input_fd;

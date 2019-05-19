@@ -57,7 +57,6 @@ struct akm8963_data {
 // This AKM8963 implementation is based on 
 // REPLICANT sensor code for N7100 and AKM8963 documentation
 
-
 int akm8963_magnetic_extrema(struct akm8963_data *data, int index)
 {
 	if (data == NULL || index < 0 || index >= 3)
@@ -568,8 +567,10 @@ int akm8963_deactivate(struct noteII_sensors_handlers *handlers)
 int akm8963_set_delay(struct noteII_sensors_handlers *handlers, int64_t delay)
 {
 	struct akm8963_data *data;
-	char path_delay[PATH_MAX] = "/sys/class/sensors/ssp_sensor/mag_poll_delay";
+	char mag_path_delay[PATH_MAX] = "/sys/class/sensors/ssp_sensor/mag_poll_delay";
+	char ori_path_delay[PATH_MAX] = "/sys/class/sensors/ssp_sensor/ori_poll_delay";
 	int rc;
+	int orirc;
 
 	//ALOGD("%s(%p, %" PRId64 ")", __func__, handlers, delay);
 
@@ -578,16 +579,11 @@ int akm8963_set_delay(struct noteII_sensors_handlers *handlers, int64_t delay)
 
 	data = (struct akm8963_data *) handlers->data;
 
-	rc = sysfs_value_write(path_delay, (int) delay);
-	if (rc < 0) {
+	rc = sysfs_value_write(mag_path_delay, (int) delay);
+	orirc = sysfs_value_write(ori_path_delay, (int) delay);
+	if (rc < 0 || orirc < 0) {
 		//ALOGD("%s: Unable to write sysfs value", __func__);
-		char path_delay2[PATH_MAX] = "/sys/class/sensors/ssp_sensor/poll_delay";
-		rc = sysfs_value_write(path_delay, (int) delay);
-		if(rc < 0)
-		{
-			//ALOGD("%s: Unable to write sysfs value", __func__);
-			return -1;
-		}
+		return -1;
 	}
 
 	data->delay = delay;

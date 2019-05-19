@@ -70,13 +70,8 @@ int lsm330dlc_acceleration_init(struct noteII_sensors_handlers *handlers,
 	int sf = snprintf(data->path_delay, PATH_MAX, "%s/poll_delay", path);
 	if(sf <= 0)
 	{
-		//ALOGD("Acc init with acc_poll_delay");
-		sf = snprintf(data->path_delay, PATH_MAX, "%s/acc_poll_delay", path);
-		if(sf <= 0)
-		{
-			//ALOGD("ACC HAS FAILED !POLL_DELAY!");
-			goto error;
-		}
+		//ALOGD("ACC HAS FAILED !POLL_DELAY!");
+		goto error;
 	}
 
 	handlers->poll_fd = input_fd;
