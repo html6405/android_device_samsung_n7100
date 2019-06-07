@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <android/api-level.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
@@ -240,6 +241,7 @@ int smdk4x12_sensors_close(hw_device_t *device)
 int smdk4x12_sensors_open(const struct hw_module_t* module, const char *id,
 	struct hw_device_t** device)
 {
+	android_set_application_target_sdk_version(__ANDROID_API_L_MR1__);
 	struct smdk4x12_sensors_device *smdk4x12_sensors_device;
 	int p, i;
 
