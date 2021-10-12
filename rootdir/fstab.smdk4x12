@@ -1,23 +1,24 @@
 # Android fstab file.
-#<src>                  <mnt_point>         <type>    <mnt_flags and options>                               <fs_mgr_flags>
+# <src>						<mnt_point>		<type>		<mnt_flags and options>		<fs_mgr_flags>
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
-# data partition must be located at the bottom for supporting device encryption
-
-/dev/block/mmcblk0p3     /efs                ext4      noatime,nosuid,nodev,journal_async_commit,errors=panic    wait
-/dev/block/mmcblk0p13    /system             ext4      ro,noatime                                                wait
-/dev/block/mmcblk0p12    /cache              f2fs      noatime,discard,inline_xattr,inline_data,nosuid,nodev     wait
-/dev/block/mmcblk0p12    /cache              ext4      noatime,nosuid,nodev,journal_async_commit,errors=panic    wait,check
-/dev/block/mmcblk0p14    /preload            ext4      noatime,nosuid,nodev,journal_async_commit                 wait
-/dev/block/mmcblk0p16    /data               f2fs      noatime,discard,inline_xattr,inline_data,nosuid,nodev     wait,check,encryptable=footer
-/dev/block/mmcblk0p16    /data               ext4      noatime,nosuid,nodev,noauto_da_alloc,journal_async_commit,errors=panic    wait,check,encryptable=footer
-/dev/block/platform/dw_mmc/by-name/OTA /misc emmc               defaults                                                         defaults
+/dev/block/platform/dw_mmc/by-name/EFS			/efs			ext4		noatime,nosuid,nodev,journal_async_commit,errors=panic		wait,first_stage_mount
+/dev/block/platform/dw_mmc/by-name/SYSTEM		/system			ext4		ro,noatime							wait,first_stage_mount
+/dev/block/platform/dw_mmc/by-name/CACHE		/cache			f2fs		noatime,discard,inline_xattr,inline_data,nosuid,nodev		wait
+/dev/block/platform/dw_mmc/by-name/CACHE		/cache			ext4		noatime,nosuid,nodev,journal_async_commit,errors=panic		wait
+/dev/block/platform/dw_mmc/by-name/HIDDEN		/vendor		    ext4		noatime,nosuid,nodev,journal_async_commit		wait,first_stage_mount
+/dev/block/platform/dw_mmc/by-name/USERDATA		/data			f2fs		noatime,discard,inline_xattr,inline_data,nosuid,nodev		wait,check,encryptable=footer
+/dev/block/platform/dw_mmc/by-name/USERDATA		/data			ext4		noatime,nosuid,nodev,noauto_da_alloc,journal_async_commit,errors=panic		wait,check,encryptable=footer
+/dev/block/platform/dw_mmc/by-name/OTA 			/misc 				emmc		defaults										defaults
 
 # vold-managed volumes ("block device" is actually a sysfs devpath)
-/devices/platform/s3c-sdhci.2/mmc_host/mmc1*     /storage/sdcard1    auto      defaults      voldmanaged=sdcard1:auto,encryptable=userdata
-/devices/platform/s5p-ehci*                      /storage/usbdisk0    auto      defaults      voldmanaged=usb:auto,noemulatedsd
+/devices/platform/s3c-sdhci.2/mmc_host/mmc1*/mmcblk1		auto		auto		defaults		voldmanaged=sdcard1:auto,encryptable=userdata
+/devices/platform/s5p-ehci*					auto		auto		defaults		voldmanaged=usb:auto
 
 # recovery
-/dev/block/mmcblk0p8            /boot                           emmc            defaults                recoveryonly
-/dev/block/mmcblk0p9            /recovery                       emmc            defaults                recoveryonly
-/dev/block/mmcblk0p10           /modem                          emmc            defaults                recoveryonly
+/dev/block/platform/dw_mmc/by-name/BOOT			/boot				emmc		defaults		recoveryonly
+/dev/block/platform/dw_mmc/by-name/RECOVERY		/recovery			emmc		defaults		recoveryonly
+/dev/block/platform/dw_mmc/by-name/RADIO		/modem				emmc		defaults		recoveryonly
+
+# zram
+/dev/block/zram0			none				swap		defaults		zramsize=419430400
