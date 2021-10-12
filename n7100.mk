@@ -40,17 +40,17 @@ PRODUCT_PACKAGES += \
 
 # Gps
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/gps/gps.conf:system/etc/gps.conf \
-    $(LOCAL_PATH)/gps/gps.xml:system/etc/gps.xml
+    $(LOCAL_PATH)/configs/gps.xml:vendor/etc/gps.xml \
+    $(LOCAL_PATH)/gps_daemon.sh:vendor/bin/gps_daemon.sh
 
 # idc 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/idc/sec_e-pen.idc:system/usr/idc/sec_e-pen.idc
+    $(LOCAL_PATH)/idc/sec_e-pen.idc:vendor/usr/idc/sec_e-pen.idc
 
 # Keylayout
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/keylayout/sec_e-pen.kl:system/usr/keylayout/sec_e-pen.kl \
-    $(LOCAL_PATH)/keylayout/sec_touchkey.kl:system/usr/keylayout/sec_touchkey.kl
+    $(LOCAL_PATH)/keylayout/sec_e-pen.kl:vendor/usr/keylayout/sec_e-pen.kl \
+    $(LOCAL_PATH)/keylayout/sec_touchkey.kl:vendor/usr/keylayout/sec_touchkey.kl
 
 # Product specific Packages
 PRODUCT_PACKAGES += \
@@ -58,9 +58,6 @@ PRODUCT_PACKAGES += \
     libsecril-client-sap \
     SamsungServiceMode \
     tinyplay
-
-PRODUCT_PACKAGES += \
-    libgpsd-compat
 
 # RIL
 PRODUCT_PACKAGES += \
@@ -85,8 +82,8 @@ PRODUCT_PACKAGES += \
 	mkfs.f2fs
 
 PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:system/etc/permissions/android.hardware.nfc.xml
+    frameworks/native/data/etc/android.hardware.bluetooth_le.xml:vendor/etc/permissions/android.hardware.bluetooth_le.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:vendor/etc/permissions/android.hardware.nfc.xml
 
 # NFCEE access control
 ifeq ($(TARGET_BUILD_VARIANT),user)
@@ -96,7 +93,7 @@ else
 endif
 
 PRODUCT_COPY_FILES += \
-    $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
+    $(NFCEE_ACCESS_PATH):vendor/etc/nfcee_access.xml
 
 PRODUCT_PACKAGES += \
     com.android.nfc_extras
@@ -109,12 +106,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # These are the hardware-specific features
 PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
-    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
+    frameworks/native/data/etc/handheld_core_hardware.xml:vendor/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:vendor/etc/permissions/android.hardware.telephony.gsm.xml
 
 # UMS
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/ums_init.sh:system/bin/ums_init.sh
+    $(LOCAL_PATH)/configs/ums_init.sh:vendor/bin/ums_init.sh
 
 $(call inherit-product-if-exists, vendor/samsung/n7100/n7100-vendor.mk)
 # Vendor properties
