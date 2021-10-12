@@ -1,2 +1,2 @@
-allow wificond glgps_exec:file read;
-allow wificond glgps_exec:file getattr;
+allow wificond gpsd_exec:file read;
+allow wificond gpsd_exec:file getattr;

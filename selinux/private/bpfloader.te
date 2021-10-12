@@ -1,2 +1,2 @@
-allow bpfloader glgps_exec:file read;
-allow bpfloader glgps_exec:file getattr;
+allow bpfloader gpsd_exec:file read;
+allow bpfloader gpsd_exec:file getattr;

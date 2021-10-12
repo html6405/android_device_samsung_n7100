@@ -1,1 +1,1 @@
-allow blkid glgps_exec:file { getattr read };
+allow blkid gpsd_exec:file { getattr read };

@@ -1,2 +1,2 @@
 type glgps, domain;
-type glgps_exec, exec_type, file_type;
+type gpsd_exec, exec_type, file_type;

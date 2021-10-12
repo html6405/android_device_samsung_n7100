@@ -1,24 +1,38 @@
-# gpsd - GPS daemon
-type gpsd, domain;
-type gpsd_exec, exec_type, vendor_file_type, file_type;
+type_transition gpsd system_data_file:file gps_data_file;
 
-init_daemon_domain(gpsd)
-net_domain(gpsd)
-wakelock_use(gpsd)
+permissive gpsd;
+init_daemon_domain(gpsd);
+allow gpsd rild:unix_stream_socket connectto;
+allow gpsd sysfs_wake_lock:file { read write open };
+allow gpsd gps_device:chr_file { read write ioctl open };
+allow gpsd servicemanager:binder call;
+allow gpsd cache_file:dir { write add_name };
+allow gpsd cache_file:fifo_file { unlink open create read getattr };
+allow gpsd cache_file:dir remove_name;
+allow gpsd system_server:binder call;
+# load SHIM libraries
+allow init gpsd:process noatsecure;
+allow gpsd dnsproxyd_socket:sock_file write;
+allow gpsd fwmarkd_socket:sock_file write;
+allow gpsd netd:unix_stream_socket connectto;
+allow gpsd self:tcp_socket create;
+allow gpsd sensorservice_service:service_manager find;
+allow gpsd sysfs:file { open read write };
+allow gpsd sysfs_devices_system_cpu:dir search;
+allow gpsd sysfs_devices_system_cpu:file { getattr open read };
+allow gpsd system_data_file:fifo_file write;
+allow gpsd system_server:unix_stream_socket { read write };
+allow gpsd port:tcp_socket { name_connect name_bind };
+allow gpsd self:tcp_socket { connect getopt };
+allow gpsd system_data_file:fifo_file { open read };
+allow gpsd system_data_file:file { lock open };
+allow gpsd node:tcp_socket node_bind;
+allow gpsd self:tcp_socket { bind read write };
+allow gpsd gps_device:chr_file getattr;
+allow gpsd gps_data_file:fifo_file { open read write };
+allow gpsd gps_data_file:file { lock open read write getattr };
+allow gpsd system_server:fd use;
+allow gpsd gps_data_file:dir search;
+allow gpsd hwservicemanager:binder call;
+allow gpsd hwservicemanager_prop:file { getattr open read };
 
-allow gpsd gps_data_file:dir rw_dir_perms;
-allow gpsd gps_data_file:notdevfile_class_set create_file_perms;
-# Socket is created by the daemon, not by init, and under /data/gps,
-# not under /dev/socket.
-type_transition gpsd gps_data_file:sock_file gps_socket;
-allow gpsd gps_socket:sock_file create_file_perms;
-# XXX Label sysfs files with a specific type?
-allow gpsd sysfs:file rw_file_perms;
-
-allow gpsd gps_device:chr_file rw_file_perms;
-
-# Execute the shell or system commands.
-allow gpsd shell_exec:file rx_file_perms;
-allow gpsd system_file:file rx_file_perms;
-allow gpsd toolbox_exec:file rx_file_perms;
-allow gpsd gpsd_exec:file execmod;

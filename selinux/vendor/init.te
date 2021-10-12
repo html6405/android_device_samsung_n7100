@@ -46,7 +46,7 @@ allow init system_file:file execute_no_trans;
 
 allow init preload_block_device:blk_file relabelto;
 allow init cpboot-daemon_exec:file execute_no_trans;
-allow init glgps_exec:file execute_no_trans;
+allow init gpsd_exec:file execute_no_trans;
 allow init hal_authsecret_default_exec:file execute_no_trans;
 allow init hal_camera_default_exec:file execute_no_trans;
 allow init hal_cas_default_exec:file execute_no_trans;

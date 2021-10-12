@@ -1,2 +1,2 @@
-allow fsverity_init glgps_exec:file read;
-allow fsverity_init glgps_exec:file getattr;
+allow fsverity_init gpsd_exec:file read;
+allow fsverity_init gpsd_exec:file getattr;

@@ -5,3 +5,4 @@ type mfc_device, dev_type;
 type gps_device, dev_type;
 type dock_device, dev_type;
 type efs_boot_dev, dev_type;
+type gpsd_exec, exec_type, file_type;

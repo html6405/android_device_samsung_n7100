@@ -1,4 +1,4 @@
 allow vdc sysfs_cpuinfo:dir search;
 allow vdc sysfs_cpuinfo:file { getattr open read };
-allow vdc glgps_exec:file read;
-allow vdc glgps_exec:file getattr;
+allow vdc gpsd_exec:file read;
+allow vdc gpsd_exec:file getattr;
