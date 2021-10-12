@@ -51,3 +51,8 @@ RECOVERY_FSTAB_VERSION := 2
 
 # assert
 TARGET_OTA_ASSERT_DEVICE := t03g,n7100,GT-N7100
+
+# Init
+ifneq ($(WITH_TWRP), true)
+TARGET_INIT_VENDOR_LIB := libinit_n7100
+endif
