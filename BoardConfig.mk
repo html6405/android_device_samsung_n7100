@@ -57,6 +57,9 @@ ifneq ($(WITH_TWRP), true)
 TARGET_INIT_VENDOR_LIB := libinit_n7100
 endif
 
+TARGET_LD_SHIM_LIBS += \
+    /vendor/bin/gpsd|libsamsung_symbols.so
+
 # SELinux
 BOARD_SEPOLICY_DIRS += device/samsung/n7100/selinux/vendor
 BOARD_PLAT_PUBLIC_SEPOLICY_DIR += device/samsung/n7100/selinux/public

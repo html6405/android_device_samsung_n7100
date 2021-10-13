@@ -40,7 +40,11 @@ PRODUCT_PACKAGES += \
 
 # Gps
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/gps.xml:vendor/etc/gps.xml
+    $(LOCAL_PATH)/configs/gps.xml:vendor/etc/gps.xml \
+
+PRODUCT_PACKAGES += \
+    gps.smdk4x12 \
+    libsamsung_symbols
 
 # idc 
 PRODUCT_COPY_FILES += \
