@@ -30,6 +30,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/init.target.rc:root/init.target.rc \
     $(LOCAL_PATH)/rootdir/init.target.usb.rc:root/init.target.usb.rc
 
+# HIDL
+DEVICE_MANIFEST_FILE := $(LOCAL_PATH)/manifest.xml
+
 # Audio
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/tiny_hw.xml:vendor/etc/sound/t03g
