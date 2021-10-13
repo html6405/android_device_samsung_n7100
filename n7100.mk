@@ -40,8 +40,7 @@ PRODUCT_PACKAGES += \
 
 # Gps
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/gps.xml:vendor/etc/gps.xml \
-    $(LOCAL_PATH)/gps_daemon.sh:vendor/bin/gps_daemon.sh
+    $(LOCAL_PATH)/configs/gps.xml:vendor/etc/gps.xml
 
 # idc 
 PRODUCT_COPY_FILES += \
