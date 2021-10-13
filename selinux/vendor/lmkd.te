@@ -1,2 +1,5 @@
+allow lmkd sysfs_cpuinfo:dir search;
+allow lmkd sysfs_cpuinfo:file { getattr open read };
 allow lmkd sysfs_lmkd:dir search;
 allow lmkd sysfs_lmkd:file { open write };
+allow lmkd gpsd_exec:file getattr;

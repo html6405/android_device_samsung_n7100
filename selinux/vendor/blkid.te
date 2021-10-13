@@ -1,1 +1,0 @@
-allow blkid gpsd_exec:file { getattr read };

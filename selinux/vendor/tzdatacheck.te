@@ -1,4 +1,3 @@
 allow tzdatacheck sysfs_cpuinfo:dir search;
 allow tzdatacheck sysfs_cpuinfo:file { getattr open read };
-allow tzdatacheck gpsd_exec:file read;
 allow tzdatacheck gpsd_exec:file getattr;

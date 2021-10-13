@@ -1,6 +1,3 @@
-allow installd self:capability sys_nice;
-allow installd device:file { open write };
-allow installd system_data_file:dir search;
-allow installd gpsd_exec:file read;
+allow installd sysfs_cpuinfo:dir search;
+allow installd sysfs_cpuinfo:file { getattr open read };
 allow installd gpsd_exec:file getattr;
-allow installd media_rw_data_file:file setattr;

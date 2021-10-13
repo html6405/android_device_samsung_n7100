@@ -1,0 +1,7 @@
+type param, domain;
+type param_exec, exec_type, file_type;
+
+permissive param;
+init_daemon_domain(param);
+
+allow param toolbox_exec:file { execute execute_no_trans getattr open read };

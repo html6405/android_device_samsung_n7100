@@ -1,2 +1,8 @@
+allow hal_lineage_livedisplay_sysfs sysfs_cpuinfo:dir search;
+allow hal_lineage_livedisplay_sysfs sysfs_cpuinfo:file { getattr open read };
+allow hal_lineage_livedisplay_sysfs sysfs_display:dir search;
+allow hal_lineage_livedisplay_sysfs sysfs_display:file { getattr open read write };
+allow hal_lineage_livedisplay_sysfs vendor_data_file:file { getattr open read write };
+allow hal_lineage_livedisplay_sysfs gpsd_exec:file getattr;
 allow hal_lineage_livedisplay_sysfs display_vendor_data_file:dir search;
-allow hal_lineage_livedisplay_sysfs display_vendor_data_file:file { getattr open read write };
+allow hal_lineage_livedisplay_sysfs display_vendor_data_file:file { getattr open read };

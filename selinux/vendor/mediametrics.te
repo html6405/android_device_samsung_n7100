@@ -1,4 +1,3 @@
 allow mediametrics sysfs_cpuinfo:dir search;
 allow mediametrics sysfs_cpuinfo:file { getattr open read };
-allow mediametrics gpsd_exec:file read;
 allow mediametrics gpsd_exec:file getattr;

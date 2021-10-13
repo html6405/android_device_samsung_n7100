@@ -1,2 +1,1 @@
-allow adbroot gpsd_exec:file read;
-allow adbroot gpsd_exec:file getattr;
+allow adbroot gpsd_exec:file { getattr read };

@@ -1,4 +1,3 @@
 allow vold_prepare_subdirs sysfs_cpuinfo:dir search;
 allow vold_prepare_subdirs sysfs_cpuinfo:file { getattr open read };
-allow vold_prepare_subdirs gpsd_exec:file read;
 allow vold_prepare_subdirs gpsd_exec:file getattr;

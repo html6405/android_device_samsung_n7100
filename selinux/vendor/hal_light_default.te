@@ -1,6 +1,11 @@
+allow hal_light_default sysfs_cpuinfo:dir search;
+allow hal_light_default sysfs_cpuinfo:file { getattr open read };
+allow hal_light_default sysfs_display:dir search;
+allow hal_light_default sysfs_display:file { getattr open read write };
+allow hal_light_default sysfs:file { getattr open write };
+allow hal_light_default gpsd_exec:file getattr;
+
 allow hal_light_default display_vendor_data_file:dir search;
 allow hal_light_default display_vendor_data_file:file { getattr open read write };
 allow hal_light_default sysfs_sec_touchkey:dir search;
-allow hal_light_default sysfs_sec_touchkey:file { getattr open read write };
-allow hal_light_default sysfs_sec_led:dir search;
-allow hal_light_default sysfs_sec_led:file { getattr open read write };
+allow hal_light_default sysfs_sec_touchkey:file { getattr open write };

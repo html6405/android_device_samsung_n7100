@@ -1,9 +1,8 @@
 allow surfaceflinger ion_device:chr_file write;
+allow surfaceflinger sysfs_cpuinfo:dir search;
+allow surfaceflinger sysfs_cpuinfo:file { getattr open read };
 allow surfaceflinger sysfs_display:dir search;
 allow surfaceflinger sysfs_display:file { open read };
-#allow surfaceflinger unlabeled:file { execute getattr open read };
-allow surfaceflinger zygote:fd use;
-allow surfaceflinger gpsd_exec:file read;
+allow surfaceflinger rild:fd use;
+allow surfaceflinger rild:fifo_file write;
 allow surfaceflinger gpsd_exec:file getattr;
-allow surfaceflinger init:binder { call transfer };
-allow surfaceflinger vendor_file:file { execute getattr open read };

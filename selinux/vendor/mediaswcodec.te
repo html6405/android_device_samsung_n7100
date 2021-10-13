@@ -1,2 +1,0 @@
-allow mediaswcodec gpsd_exec:file read;
-allow mediaswcodec gpsd_exec:file getattr;

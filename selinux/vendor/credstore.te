@@ -1,2 +1,0 @@
-allow credstore gpsd_exec:file read;
-allow credstore gpsd_exec:file getattr;

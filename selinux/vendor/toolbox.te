@@ -1,7 +1,9 @@
-allow toolbox init:fifo_file { getattr write ioctl read};
-allow toolbox ctl_rildaemon_prop:property_service set;
-allow toolbox radio_prop:property_service set;
+allow toolbox sysfs_cpuinfo:dir search;
+allow toolbox sysfs_cpuinfo:file { getattr open read };
+allow toolbox init:fifo_file { getattr write };
+allow toolbox init:unix_stream_socket connectto;
 allow toolbox property_socket:sock_file write;
-allow toolbox init:unix_stream_socket { connectto read write };
-allow toolbox gpsd_exec:file read;
+allow toolbox ctl_start_prop:property_service set;
+allow toolbox ctl_stop_prop:property_service set;
+allow toolbox radio_prop:property_service set;
 allow toolbox gpsd_exec:file getattr;

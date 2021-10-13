@@ -1,0 +1,2 @@
+type gps_device, dev_type;
+type gpsd_exec, exec_type, file_type;

@@ -1,4 +1,5 @@
 allow mediaprovider method_trace_data_file:file { execute read unlink };
 allow mediaprovider cache_recovery_file:dir { open read };
-allow mediaprovider sysfs_cpuinfo:dir search;
-allow mediaprovider sysfs_cpuinfo:file { getattr open read };
+allow mediaprovider unlabeled:fd use;
+allow mediaprovider rootfs:dir { add_name };
+allow mediaprovider rootfs:file { open read };

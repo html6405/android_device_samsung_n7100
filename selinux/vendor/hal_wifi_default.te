@@ -1,6 +1,26 @@
-allow hal_wifi_default system_data_file:file { getattr open read };
-allow hal_wifi_default wifi_firmware_path:file { open write };
-allow hal_wifi_default wifi_data_file:file { open read write };
-allow hal_wifi_default efs_device_file:dir search;
+r_dir_file(hal_wifi_default, wifi_efs_file)
+
+permissive hal_wifi_default;
+
+allow hal_wifi_default hal_wifi_supplicant_default_exec:file entrypoint;
 allow hal_wifi_default efs_file:dir search;
-allow hal_wifi_default unlabeled:dir search;
+allow hal_wifi_default self:capability { setgid setuid };
+allow hal_wifi_default self:packet_socket { read bind create write };
+allow hal_wifi_default system_data_file:file { open read };
+allow hal_wifi_default wpa_data_file:dir { setattr write remove_name rmdir search add_name };
+allow hal_wifi_default rfkill_device:chr_file { open read };
+allow hal_wifi_default self:netlink_route_socket { bind create nlmsg_write read write };
+allow hal_wifi_default wifi_data_file:file { read write getattr open create setattr rename unlink };
+allow hal_wifi_default wifi_firmware_path:file write;
+allow hal_wifi_default wpa_data_file:sock_file { write create setattr unlink };
+allow hal_wifi_default wifi_data_file:dir { search add_name write remove_name };
+allow hal_wifi_default efs_device_file:dir search;
+allow hal_wifi_default wifi_efs_file:dir search;
+
+allow hal_wifi_default gpsd_exec:file getattr;
+allow hal_wifi_default self:udp_socket ioctl;
+
+allow hal_wifi_default wifi_socket:dir { add_name search setattr write remove_name rmdir };
+allow hal_wifi_default wifi_socket:sock_file { setattr write create unlink };
+
+allow hal_wifi_default efs_device_file:file { open read };

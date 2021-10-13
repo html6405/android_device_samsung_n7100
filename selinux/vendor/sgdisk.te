@@ -1,3 +1,2 @@
 allow sgdisk sysfs_cpuinfo:dir search;
 allow sgdisk sysfs_cpuinfo:file { getattr open read };
-allow sgdisk gpsd_exec:file { getattr read };

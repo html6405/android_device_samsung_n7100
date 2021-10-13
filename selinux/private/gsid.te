@@ -1,2 +1,0 @@
-allow gsid gpsd_exec:file read;
-allow gsid gpsd_exec:file getattr;

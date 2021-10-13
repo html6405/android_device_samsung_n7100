@@ -1,1 +1,0 @@
-allow rss_hwm_reset gpsd_exec:file { getattr read };

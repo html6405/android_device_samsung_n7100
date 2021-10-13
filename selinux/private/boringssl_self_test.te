@@ -1,2 +1,0 @@
-allow boringssl_self_test gpsd_exec:file read;
-allow boringssl_self_test gpsd_exec:file getattr;

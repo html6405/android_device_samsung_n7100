@@ -1,2 +1,0 @@
-allow derive_sdk gpsd_exec:file read;
-allow derive_sdk gpsd_exec:file getattr;

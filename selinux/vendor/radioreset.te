@@ -19,3 +19,5 @@ allow radioreset system_file:file execute_no_trans;
 allow radioreset servicemanager:binder { call };
 allow radioreset system_server:binder call;
 allow system_server radioreset:fifo_file write;
+allow radioreset gpsd_exec:file getattr;
+allow radioreset system_server:binder transfer;

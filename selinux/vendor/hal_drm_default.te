@@ -1,2 +1,7 @@
-allow hal_drm_default media_data_file:dir { create open read search write remove_name getattr add_name setattr };
-allow hal_drm_default media_data_file:file { create getattr open read write };
+allow hal_drm_default sysfs_cpuinfo:dir { search };
+allow hal_drm_default sysfs_cpuinfo:file { read open getattr };
+allow hal_drm_default vndbinder_device:chr_file { read write open ioctl };
+
+allow hal_drm_default media_data_file:dir { create getattr open read write search add_name };
+allow hal_drm_default media_data_file:file { getattr open read create write };
+allow hal_drm_default gpsd_exec:file getattr;

@@ -3,7 +3,6 @@
 /dev/mali                                                        u:object_r:gpu_device:s0
 /dev/ump                                                         u:object_r:gpu_device:s0
 /dev/fimg2d                                                      u:object_r:gpu_device:s0
-/sys/class/misc/gpu_clock_control(/.*)?                          u:object_r:gpu_device:s0
 
 # RIL
 /dev/link_pm                                                     u:object_r:radio_device:s0
@@ -40,7 +39,11 @@
 /sys/devices/platform/bcm433[0-9]_bluetooth/rfkill/rfkill0/state     u:object_r:sysfs_bluetooth_writable:s0
 
 # GPS
+/(vendor|system/vendor)/bin/gpsd                                 u:object_r:gpsd_exec:s0
 /dev/ttySAC1                                                     u:object_r:gps_device:s0
+/dev/socket/gps                                                  u:object_r:gps_socket:s0
+/data/gps(/.*)?                                                  u:object_r:gps_data_file:s0
+/data/system/gps(/.*)?                                           u:object_r:gps_data_file:s0
 
 # Sensors
 /dev/akm8975                                                     u:object_r:sensors_device:s0
@@ -56,6 +59,10 @@
 /data/.psm.info                                                  u:object_r:wifi_data_file:s0
 /sys/module/dhd/parameters/firmware_path                         u:object_r:wifi_firmware_path:s0
 /efs/wifi(/.*)?                                                  u:object_r:wifi_efs_file:s0
+/data/vendor/wifi/wpa/sockets                                    u:object_r:wifi_socket:s0
+
+# SN
+/efs/FactoryApp/serial_no                                        u:object_r:sn_efs_file:s0
 
 # Firmwares
 /vendor/firmware/mfc_fw.bin                               u:object_r:firmware_mfc:s0
@@ -71,6 +78,7 @@
 /system/bin/tinyplay                                             u:object_r:tinyplay_exec:s0
 /vendor/bin/gpsd                                          u:object_r:gpsd_exec:s0
 /vendor/bin/restart_rild.sh                               u:object_r:radioreset_exec:s0
+/vendor/bin/param.sh                                      u:object_r:param_exec:s0
 /vendor/bin/hw/wpa_supplicant                                    u:object_r:hal_wifi_default_exec:s0
 /vendor/bin/main_route_table.sh                               u:object_r:main_route_table_exec:s0
 
@@ -83,12 +91,14 @@
 /data/cfw(/.*)?							 u:object_r:firmware_exynos:s0
 
 # Vendor
-/(vendor|system/vendor)/lib/hw/gralloc.exynos4.so							                u:object_r:system_file:s0
-/(vendor|system/vendor)/lib/hw/hwcomposer.exynos4.so							            u:object_r:system_file:s0
+/(vendor|system/vendor)/lib/hw/gralloc.exynos4.so							u:object_r:system_file:s0
+#/(vendor|system/vendor)/lib/hw/gralloc.exynos4.so     u:object_r:gralloc_file:s0
+/(vendor|system/vendor)/lib/hw/hwcomposer.exynos4.so							u:object_r:system_file:s0
+#/(vendor|system/vendor)/lib/hw/hwcomposer.exynos4.so     u:object_r:hwc_file:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.0-service\.exynos4412			u:object_r:hal_power_default_exec:s0
-/(vendor|system/vendor)/bin/hw/android\.hardware\.gnss@[0-9]\.[0-9]-service\.exynos4		u:object_r:hal_gnss_default_exec:s0
 /(vendor|system/vendor)/bin/hw/android\.hardware\.light@[0-9]\.[0-9]-service\.samsung 		u:object_r:hal_light_default_exec:s0
-/(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.samsung                 u:object_r:hal_lineage_touch_default_exec:s0
+/(vendor|system/vendor)/bin/hw/vendor\.lineage\.touch@1\.0-service\.samsung          u:object_r:hal_lineage_touch_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.gnss@[0-9]\.[0-9]-service\.exynos4		u:object_r:hal_gnss_default_exec:s0
 /vendor/bin/hw/android.hardware.authsecret@1.0-service                                      u:object_r:hal_authsecret_default_exec:s0
 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service.software                             u:object_r:hal_gatekeeper_default_exec:s0
 /vendor/bin/hw/android.hardware.ir@1.0-service.samsung                                      u:object_r:hal_ir_default_exec:s0
@@ -102,10 +112,10 @@
 /sys/devices/platform/i2c-gpio.14/i2c-14/14-0036/power_supply(/.*)?	u:object_r:sysfs_batteryinfo:s0
 
 # CPU
-/sys/power/cpufreq_min_limit						u:object_r:sysfs_devices_system_cpu:s0
-/sys/power/cpufreq_max_limit						u:object_r:sysfs_devices_system_cpu:s0
-/sys/power/cpufreq_table						    u:object_r:sysfs_devices_system_cpu:s0
-/sys/devices/platform/s5p-tmu/temperature			u:object_r:sysfs_devices_system_cpu:s0
+/sys/power/cpufreq_min_limit						u:object_r:sysfs_cpuinfo:s0
+/sys/power/cpufreq_max_limit						u:object_r:sysfs_cpuinfo:s0
+/sys/power/cpufreq_table						    u:object_r:sysfs_cpuinfo:s0
+/sys/devices/platform/s5p-tmu/temperature			u:object_r:sysfs_cpuinfo:s0
 
 # lmkd
 /sys/module/lowmemorykiller(/.*)?                                u:object_r:sysfs_lmkd:s0
@@ -114,11 +124,19 @@
 /sys/devices/virtual/block/zram0(/.*)?                           u:object_r:sysfs_zram:s0
 
 # GPS
-/data/gps/\.gpsd.lock                                            u:object_r:gps_data_file:s0
-/data/gps/glgpsctrl                                              u:object_r:gps_data_file:s0
-/data/gps/\.gps\.interface\.pipe\.to_gpsd                        u:object_r:gps_data_file:s0
-/data/gps/\.gps\.interface\.pipe\.to_jni                         u:object_r:gps_data_file:s0
-/data/gps/gldata\.sto                                            u:object_r:gps_data_file:s0
+/data/system/gps/\.gpsd.lock                                            u:object_r:gps_data_file:s0
+/data/system/gps/gldata.sto                                             u:object_r:gps_data_file:s0
+/data/gps/glgpsctrl                                                     u:object_r:gps_data_file:s0
+/data/system/gps/\.gps\.interface\.pipe\.to_gpsd                        u:object_r:gps_data_file:s0
+/data/system/gps/\.gps\.interface\.pipe\.to_jni                         u:object_r:gps_data_file:s0
+/data/system/gps/alt.dat                                                u:object_r:gps_data_file:s0
+
+# USB
+/sys/devices/virtual/android_usb/android0(/.*)?                  u:object_r:sysfs_usb:s0
+/sys/devices/virtual/net/rmnet0(/.*)?                            u:object_r:sysfs_rmnet:s0
+
+# MMC
+/sys/kernel/debug/mmc0/mmc0:0001/ext_csd                         u:object_r:ext_csd:s0
 
 # Wakeup sources
 /sys/kernel/debug/wakeup_sources				u:object_r:debugfs_wakeup_sources:s0
@@ -141,8 +159,4 @@
 /dev/cpuset(/.*)?						u:object_r:cgroup:s0
 /dev/stune(/.*)?						u:object_r:cgroup:s0
 
-# USB
-/sys/devices/virtual/android_usb/android0(/.*)?                  u:object_r:sysfs_usb:s0
-
 /sys/devices/virtual/sec/sec_touchkey(/.*)?                   u:object_r:sysfs_sec_touchkey:s0
-/sys/devices/virtual/sec/led(/.*)?                            u:object_r:sysfs_sec_led:s0

@@ -1,2 +1,0 @@
-allow apexd gpsd_exec:file read;
-allow apexd gpsd_exec:file getattr;

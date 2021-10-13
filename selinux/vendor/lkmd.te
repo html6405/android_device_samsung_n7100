@@ -1,4 +1,0 @@
-allow lmkd zygote:dir search;
-allow lmkd zygote:file { open write };
-allow lmkd gpsd_exec:file read;
-allow lmkd gpsd_exec:file getattr;

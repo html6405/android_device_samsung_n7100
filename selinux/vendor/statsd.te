@@ -1,2 +1,0 @@
-allow statsd gpsd_exec:file read;
-allow statsd gpsd_exec:file getattr;

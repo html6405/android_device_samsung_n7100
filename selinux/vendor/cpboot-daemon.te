@@ -1,8 +1,8 @@
 type cpboot-daemon, domain;
 type cpboot-daemon_exec, exec_type, file_type;
-
-permissive cpboot-daemon;
 init_daemon_domain(cpboot-daemon);
+permissive cpboot-daemon;
+
 
 allow cpboot-daemon cgroup:dir { create add_name };
 allow cpboot-daemon cgroup:file read;
@@ -16,11 +16,15 @@ allow cpboot-daemon proc:file { open read };
 allow cpboot-daemon property_socket:sock_file write;
 allow cpboot-daemon radio_device:chr_file { read write ioctl open };
 allow cpboot-daemon radio_prop:property_service set;
-allow cpboot-daemon self:capability { setuid };
 allow cpboot-daemon sysfs_radio:file { read write open };
 allow cpboot-daemon usbfs:dir search;
 
 allow cpboot-daemon cache_block_device:blk_file { open read };
 allow cpboot-daemon sysfs:file { open read write };
-allow cpboot-daemon device:chr_file { create unlink };
-allow cpboot-daemon self:capability { dac_override };
+
+allow cpboot-daemon proc_cmdline:file { open read };
+allow cpboot-daemon self:capability { setuid };
+allow cpboot-daemon block_device:dir search;
+
+# FIX ME
+# allow cpboot-daemon usbfs:filesystem mount;

@@ -1,2 +1,0 @@
-allow bpfloader gpsd_exec:file read;
-allow bpfloader gpsd_exec:file getattr;

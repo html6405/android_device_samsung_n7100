@@ -1,0 +1,2 @@
+allow gpsd system_suspend:binder call;
+allow gpsd system_suspend_hwservice:hwservice_manager find;

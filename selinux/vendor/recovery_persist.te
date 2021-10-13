@@ -1,2 +1,0 @@
-allow recovery_persist gpsd_exec:file read;
-allow recovery_persist gpsd_exec:file getattr;

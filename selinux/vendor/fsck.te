@@ -1,8 +1,5 @@
 allow fsck efs_block_device:blk_file { read write getattr open ioctl };
+allow fsck sysfs_cpuinfo:dir search;
+allow fsck sysfs_cpuinfo:file { getattr open read };
 allow fsck preload_block_device:blk_file { ioctl open read write };
-allow fsck block_device:blk_file { ioctl open read write };
-allow fsck cache_file:dir getattr;
-allow fsck self:capability dac_override;
-allow fsck tmpfs:blk_file getattr;
-allow fsck gpsd_exec:file read;
 allow fsck gpsd_exec:file getattr;

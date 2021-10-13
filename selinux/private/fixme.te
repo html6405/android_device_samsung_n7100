@@ -4,6 +4,11 @@
 #============= storaged ==============
 # allow storaged debugfs:file { getattr open read };
 
+#============= sysinit ==============
+#  allow sysinit app_data_file:dir search;
+# allow sysinit app_data_file:file open;
+#  allow sysinit self:capability dac_override;
+
 #============= init ==============
 # allow init system_file:dir relabelfrom;
 # allow init system_file:lnk_file relabelfrom;

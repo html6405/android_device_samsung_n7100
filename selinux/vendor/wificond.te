@@ -1,2 +1,1 @@
-allow wificond gpsd_exec:file read;
 allow wificond gpsd_exec:file getattr;

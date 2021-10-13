@@ -1,4 +1,4 @@
 allow bootstat sysfs_cpuinfo:dir search;
 allow bootstat sysfs_cpuinfo:file { getattr open read };
-allow bootstat gpsd_exec:file read;
 allow bootstat gpsd_exec:file getattr;
+allow bootstat gpsd_exec:file read;
