@@ -58,7 +58,8 @@ TARGET_INIT_VENDOR_LIB := libinit_n7100
 endif
 
 TARGET_LD_SHIM_LIBS += \
-    /vendor/bin/gpsd|libsamsung_symbols.so
+	/vendor/bin/gpsd|libsamsung_symbols.so \
+    /vendor/bin/gpsd|libdmitry.so
 
 # SELinux
 BOARD_SEPOLICY_DIRS += device/samsung/n7100/selinux/vendor
