@@ -16,7 +16,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <string name="updater_server_url" translatable="false">http://html6405.ddns.net/{device}/html6405/LOS16.xml</string>
+    <string name="updater_server_url" translatable="false">http://html6405.ddns.net/{device}/html6405/LOS18.xml</string>
 
     <string name="menu_changelog_url" translatable="false">https://forum.xda-developers.com/t/rom-unofficial-11-0-n7100-samsung-galaxy-note-2-lineageos-18-1-alpha-treblelized.4346705/post-85769219</string>
 
