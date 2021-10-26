@@ -144,7 +144,7 @@ on fs
 ############################
 
 # cbd
-service cpboot-daemon /vendor/bin/cbd -d
+service cpboot-daemon /vendor/bin/cbd -d -p 10
     class main
     user root
     group radio cache inet misc audio sdcard_rw log
