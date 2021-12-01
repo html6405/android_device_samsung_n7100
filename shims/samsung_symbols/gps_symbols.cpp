@@ -16,10 +16,6 @@
 #include <string.h>
 #include <openssl/ssl.h>
 
-// android::SensorManager::getSensorList(android::Sensor const* const**) const
-extern "C" void _ZNK7android13SensorManager13getSensorListEPPKPKNS_6SensorE();
-extern "C" void _ZNK7android13SensorManager13getSensorListEPPKPKNS_6SensorE(){}
-
 extern "C" {
 
 const SSL_METHOD *SSLv3_method(void) {
