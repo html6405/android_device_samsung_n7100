@@ -49,7 +49,8 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     gps.smdk4x12 \
     libsamsung_symbols \
-    libdmitry
+    libdmitry\
+    libshims_sensorlistener
 
 # idc 
 PRODUCT_COPY_FILES += \
