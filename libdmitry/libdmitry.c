@@ -123,9 +123,6 @@
     //android::SensorManager::SensorManager(void)
     void _ZN7android13SensorManagerC1Ev(void *sensorMgr);
 
-    //android::SensorManager::createEventQueue(void)
-    void _ZN7android13SensorManager16createEventQueueEv(void **retVal, void *sensorMgr);
-
     //this used to exist in OpenSLL, but does not in BoringSSL - for some reason GPS library uses it anyways
     void *CRYPTO_malloc(uint32_t sz, const char *file, uint32_t line);
 
