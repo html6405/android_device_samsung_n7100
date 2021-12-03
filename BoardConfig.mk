@@ -37,11 +37,14 @@ BOARD_GLOBAL_CFLAGS += -DDISABLE_ASHMEM_TRACKING
 # Graphics
 TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 
+# TWRP
+TW_THEME := portrait_mdpi
+
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/n7100/bluetooth
 
 # Kernel
-TARGET_KERNEL_SOURCE := kernel/samsung/smdk4412
+TARGET_KERNEL_SOURCE := kernel/samsung/kona
 TARGET_KERNEL_CONFIG := lineageos_n7100_defconfig
 
 # Power HAL
