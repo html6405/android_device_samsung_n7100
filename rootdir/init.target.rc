@@ -144,14 +144,14 @@ on fs
 ############################
 
 # cbd
-service cpboot-daemon /vendor/bin/cbd -d -p 10
+service vendor.cpboot-daemon /vendor/bin/cbd -d -p 10
     class main
     user root
     group radio cache inet misc audio sdcard_rw log
     seclabel u:r:cpboot-daemon:s0
 
 # Start GPS daemon
-service gpsd /vendor/bin/gpsd -c /vendor/etc/gps.xml
+service vendor.gpsd /vendor/bin/gpsd -c /vendor/etc/gps.xml
     class main
     user gps
     group system inet net_raw
