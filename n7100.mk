@@ -78,7 +78,8 @@ PRODUCT_PACKAGES += \
     libnfc \
     libnfc_jni \
     Nfc \
-    Tag
+    Tag \
+    android.hardware.nfc@1.2-service.samsung
 
 # Camera
 PRODUCT_PACKAGES += \
