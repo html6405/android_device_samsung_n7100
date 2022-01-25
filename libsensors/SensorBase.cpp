@@ -30,6 +30,8 @@
 
 #include "SensorBase.h"
 
+#include <stdlib.h>
+
 /*****************************************************************************/
 
 static pthread_mutex_t sspEnableLock = PTHREAD_MUTEX_INITIALIZER;
