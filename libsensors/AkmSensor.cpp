@@ -30,6 +30,7 @@
 
 #define LOG_TAG "AkmSensor"
 
+#include <stdlib.h>
 //#define ALOG_NDEBUG 0
 
 /*****************************************************************************/

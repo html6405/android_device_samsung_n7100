@@ -36,6 +36,8 @@
  */
 #define PRESSURE_HECTO (1.0f/100.0f)
 
+#include <stdlib.h>
+
 /*****************************************************************************/
 
 PressureSensor::PressureSensor()

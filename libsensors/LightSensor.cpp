@@ -29,6 +29,8 @@
 
 #define LOG_TAG "LightSensor"
 
+#include <stdlib.h>
+
 // #define ALOG_NDEBUG 0
 
 /*****************************************************************************/

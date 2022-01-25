@@ -29,6 +29,8 @@
 
 #define LOG_TAG "GyroSensor"
 
+#include <stdlib.h>
+
 #define FETCH_FULL_EVENT_BEFORE_RETURN 1
 #define IGNORE_EVENT_TIME 350000000
 /*****************************************************************************/

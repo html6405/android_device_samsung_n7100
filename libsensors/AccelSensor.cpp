@@ -25,6 +25,8 @@
 #include <cutils/log.h>
 #include <cstring>
 
+#include <stdlib.h>
+
 #include "AccelSensor.h"
 
 #define LOG_TAG "AccelerometerSensor"
