@@ -22,7 +22,6 @@ ifneq ($(TARGET_SIMULATOR),true)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := sensors.$(TARGET_BOOTLOADER_BOARD_NAME)
-
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_VENDOR_MODULE := true
 LOCAL_MODULE_TAGS := optional
@@ -39,7 +38,7 @@ LOCAL_SRC_FILES := 						\
                                 AccelSensor.cpp                 \
                                 PressureSensor.cpp
 
-LOCAL_SHARED_LIBRARIES := liblog libcutils libdl libhardware
+LOCAL_SHARED_LIBRARIES := libutils libcutils liblog libhardware
 LOCAL_PRELINK_MODULE := false
 
 include $(BUILD_SHARED_LIBRARY)
