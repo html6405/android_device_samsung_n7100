@@ -24,7 +24,7 @@
 #include <sys/select.h>
 #include <dlfcn.h>
 #include <cstring>
-
+#include <pthread.h>
 #include <cutils/log.h>
 #include "AkmSensor.h"
 
@@ -115,6 +115,29 @@ int AkmSensor::setInitialState()
     return 0;
 }
 
+static void* set_initial_state_fn(void *data) {
+    AkmSensor *sensor = (AkmSensor*)data;
+
+    ALOGE("%s: start", __func__);
+    usleep(100000); // 100ms
+    sensor->setDelay(0, 100000);
+    ALOGE("%s: end", __func__);
+
+    return NULL;
+}
+
+static void set_initial_state_thread(AkmSensor *sensor) {
+       pthread_attr_t thread_attr;
+       pthread_t setdelay_thread;
+
+       pthread_attr_init(&thread_attr);
+       pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_DETACHED);
+       int rc = pthread_create(&setdelay_thread, &thread_attr, set_initial_state_fn, (void*)sensor);
+       if (rc < 0) {
+           ALOGE("%s: Unable to create thread", __func__);
+       }
+}
+
 int AkmSensor::enable(int32_t handle, int en)
 {
     int what = -1;
@@ -146,6 +169,7 @@ int AkmSensor::enable(int32_t handle, int en)
 
         err = sspEnable(LOG_TAG, SSP_MAG, en);
         setInitialState();
+        set_initial_state_thread(this);
 
         ALOGE_IF(err, "Could not change sensor state (%s)", strerror(-err));
         if (!err) {
