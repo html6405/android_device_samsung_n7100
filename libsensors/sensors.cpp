@@ -40,6 +40,7 @@
 #include "AccelSensor.h"
 #include "PressureSensor.h"
 
+#include <unistd.h>
 /*****************************************************************************/
 
 #define DELAY_OUT_TIME 0x7FFFFFFF
