@@ -65,6 +65,6 @@ TARGET_LD_SHIM_LIBS += \
 	/vendor/bin/gpsd|libdmitry.so
 
 # SELinux
-BOARD_SEPOLICY_DIRS += device/samsung/n7100/selinux/vendor
+BOARD_VENDOR_SEPOLICY_DIRS += device/samsung/n7100/selinux/vendor
 BOARD_PLAT_PUBLIC_SEPOLICY_DIR += device/samsung/n7100/selinux/public
 BOARD_PLAT_PRIVATE_SEPOLICY_DIR += device/samsung/n7100/selinux/private
