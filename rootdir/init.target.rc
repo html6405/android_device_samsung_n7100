@@ -95,6 +95,9 @@ on post-fs-data
     restorecon /data/.cid.info
     restorecon /data/ISP_CV
 
+# MDNIE mode
+    write /sys/class/mdnie/mdnie/mode 2
+
 on boot
 ############################
 
