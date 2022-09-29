@@ -48,8 +48,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += \
     libsamsung_symbols \
-    libdmitry\
-    libshims_sensorlistener
+    libdmitry
 
 # idc 
 PRODUCT_COPY_FILES += \
