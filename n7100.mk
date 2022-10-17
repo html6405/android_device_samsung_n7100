@@ -63,7 +63,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libsecril-client \
     libsecril-client-sap \
-    SamsungServiceMode \
     tinyplay
 
 # RIL
@@ -84,9 +83,7 @@ PRODUCT_PACKAGES += \
 
 # f2fs
 PRODUCT_PACKAGES += \
-	fibmap.f2fs \
-	fsck.f2fs \
-	mkfs.f2fs
+	fsck.f2fs
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:vendor/etc/permissions/android.hardware.bluetooth_le.xml \
