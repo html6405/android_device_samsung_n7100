@@ -7,6 +7,8 @@
 #include <hardware/power.h>
 #include <hardware/hardware.h>
 
+#pragma clang diagnostic ignored "-Wimplicit-function-declaration"
+
 /*
  * CURIOUS WHAT THE HELL IS GOING ON IN HERE? READ UP...
  *
