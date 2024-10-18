@@ -21,7 +21,6 @@ allow init system_data_file:file { lock };
 allow init gps_data_file:file { lock };
 allow init gps_data_file:fifo_file { write };
 allow init hidl_base_hwservice:hwservice_manager { add };
-allow init radioreset:process noatsecure;
 allow init app_data_file:dir { getattr };
 allow init app_data_file:file { getattr read setattr write };
 allow init mnt_user_file:lnk_file read;
