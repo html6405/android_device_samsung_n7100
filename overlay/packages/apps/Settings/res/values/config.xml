@@ -28,4 +28,8 @@
 
     <!-- Button settings enabled or disabled
     <bool name="config_device_has_button_settings" translatable="false">true</bool> -->
+
+        <!-- Whether or not the dock settings are to be displayed for this device when docked -->
+    <bool name="has_dock_settings">true</bool>
+
 </resources>
