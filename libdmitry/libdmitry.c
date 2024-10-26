@@ -78,7 +78,7 @@
     extern void _ZN7android13SensorManagerD1Ev(void *sensorMgr);
 
     //android::SensorManager::SensorManager(android::String16 const&)
-    extern void _ZN7android13SensorManagerC1ERKNS_8String16E(void *sensorMgr, void **str16P);
+    extern void _ZN7android13SensorManagerC1ERKNS_8String16Ei(void *sensorMgr, void **str16P);
 
     //android::SensorManager::createEventQueue(android::String8, int)
     extern void _ZN7android13SensorManager16createEventQueueENS_7String8EiNS_8String16(void **retVal, void *sensorMgr, void **str8P, int mode);
@@ -151,7 +151,7 @@ void _ZN7android13SensorManagerC1Ev(void *sensorMgr)
     void *string;
 
     _ZN7android8String16C1EPKc(&string, "gps.default");
-    _ZN7android13SensorManagerC1ERKNS_8String16E(sensorMgr, &string);
+    _ZN7android13SensorManagerC1ERKNS_8String16Ei(sensorMgr, &string);
     _ZN7android8String16D1Ev(&string);
 }
 
