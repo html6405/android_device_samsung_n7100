@@ -18,7 +18,6 @@
 # system.prop for n7100
 #
 PRODUCT_PROPERTY_OVERRIDES += \
-	config.disable_atlas=true \
 	dalvik.vm.dexopt-data-only=1 \
 	dalvik.vm.dex2oat-Xmx=256m \
 	vendor.rild.libpath=/vendor/lib/libsecril-shim.so \
@@ -73,18 +72,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
 	persist.sys.force_highendgfx=true
 
-# Reduce background apps limit to 16 on low-tier devices
-# PRODUCT_PROPERTY_OVERRIDES += \
-	ro.sys.fw.bg_apps_limit=16
-
-# Set max background services
-# PRODUCT_PROPERTY_OVERRIDES += \
-	ro.config.max_starting_bg=4
-
 # GPS
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.ril.def.agps.mode=1
-
-# Wifi
-# PRODUCT_PROPERTY_OVERRIDES += \
-	wifi.supplicant_scan_interval=240
