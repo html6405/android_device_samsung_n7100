@@ -111,7 +111,6 @@ on boot
 # Changing scheduler to cfq and reseting cpu min freq to -1 after boot complete
 on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor pegasusq
-    setprop sys.usb.configfs 1
 
 # epen
     chown system system /sys/class/sec/sec_epen/epen_saving_mode
