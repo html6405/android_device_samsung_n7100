@@ -67,7 +67,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Low RAM mode
 PRODUCT_PROPERTY_OVERRIDES += \
-	ro.config.low_ram=true
+	ro.config.low_ram=false
 
 # Force high-end graphics in low ram mode
 PRODUCT_PROPERTY_OVERRIDES += \
