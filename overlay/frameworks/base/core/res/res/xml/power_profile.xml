@@ -20,10 +20,10 @@
 <device name="Android">
     <!-- All values are in mAh except as noted -->
     <item name="none">0</item>
-    <item name="screen.on">172</item>
+    <item name="screen.on.display0">172</item>
     <item name="bluetooth.active">17</item>
     <item name="bluetooth.on">0.3</item>
-    <item name="screen.full">155</item>
+    <item name="screen.full.display0">155</item>
     <item name="wifi.on">0.3</item>
     <item name="wifi.active">96</item>
     <item name="wifi.scan">70</item>
